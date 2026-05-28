@@ -119,7 +119,7 @@
           }
         ],
         etymology: "源自拉丁語 'exspectare'，意為「向外看、等待或期望」。",
-        cognate: "inspect (檢查), respect (尊敬), spectator (觀眾), suspect (懷懷)",
+        cognate: "inspect (檢查), respect (尊敬), spectator (觀眾), suspect (懷疑)",
         collocations: [
           { en: "fully expect", zh: "完全料想" },
           { en: "expect the worst", zh: "做好最壞打算" },
@@ -580,8 +580,7 @@
         id: 22,
         word: "cooperate",
         syllables: ["co", "op", "er", "ate"],
-        ipa: "/ko\u0251p\u0259\u201cret/",
-        ipa: "/ko\u0251p\u0259\u201cret/",
+        ipa: "/koˈɑpəˌret/",
         pos: "vi.",
         meaning_en: "to work jointly on an activity or project; to act in compliance with another",
         meaning_zh: "合作；協作",
@@ -603,8 +602,7 @@
         id: 23,
         word: "cooperation",
         syllables: ["co", "op", "er", "a", "tion"],
-        ipa: "/ko\u201e\u0251p\u0259`re\u0283\u0259n/",
-        ipa: "/ko\u201e\u0251p\u0259`re\u0283\u0259n/",
+        ipa: "/koˌɑpə`reʃən/",
         pos: "n. [U]",
         meaning_en: "the process of working together to the same end",
         meaning_zh: "合作；協力",
@@ -626,7 +624,7 @@
         id: 24,
         word: "arrange",
         syllables: ["ar", "range"],
-        ipa: "/\u0259`rend\u0292/",
+        ipa: "/ə`rendʒ/",
         pos: "vt. / vi.",
         meaning_en: "to organize or plan something; to put things in a neat or required order",
         meaning_zh: "安排；規劃；整理",
@@ -652,7 +650,7 @@
         id: 25,
         word: "arrangement",
         syllables: ["ar", "range", "ment"],
-        ipa: "/\u0259`rend\u0292m\u0259nt/",
+        ipa: "/ə`rendʒmənt/",
         pos: "n. [C]",
         meaning_en: "a plan or preparation that you make so that something can happen; an orderly layout",
         meaning_zh: "安排；約定；準備措施",
@@ -674,7 +672,7 @@
         id: 26,
         word: "relax",
         syllables: ["re", "lax"],
-        ipa: "/r\u026a`l\u00e6ks/",
+        ipa: "/rɪ`læks/",
         pos: "vi.",
         meaning_en: "to rest by doing something pleasant; to make or become less tense",
         meaning_zh: "放鬆；休息；舒緩",
@@ -696,7 +694,7 @@
         id: 27,
         word: "container",
         syllables: ["con", "tain", "er"],
-        ipa: "/k\u0259n`ten\u025dr/",
+        ipa: "/kən`tenɚ/",
         pos: "n. [C]",
         meaning_en: "an empty object, such as a box, bottle, or jar, made for holding goods or foods",
         meaning_zh: "容器",
@@ -718,7 +716,7 @@
         id: 28,
         word: "contain",
         syllables: ["con", "tain"],
-        ipa: "/k\u0259n`ten/",
+        ipa: "/kən`ten/",
         pos: "vt.",
         meaning_en: "to have something inside; to keep something under control or within bounds",
         meaning_zh: "包含；包含有；克制 / 抑制",
@@ -731,7 +729,7 @@
         etymology: "源自拉丁語 'continere'，意為「抱在一起，結合，容納」。",
         cognate: "container (容器), content (內容), detain (拘留), maintain (維持)",
         collocations: [
-          { en: "contain a card", zh: "裝有卡片" },
+          { en: "contain a card", zh: "裝有片卡" },
           { en: "contain information", zh: "包含資訊" },
           { en: "contain excitement", zh: "抑制興興奮情緒" }
         ]
@@ -766,7 +764,7 @@
         id: 30,
         word: "aspect",
         syllables: ["as", "pect"],
-        ipa: "/`\u00e6sp\u025bkt/",
+        ipa: "/`æspɛkt/",
         pos: "n. [C]",
         meaning_en: "a certain feature or distinct part of a complex situation, plan, or idea",
         meaning_zh: "方面；層面",
@@ -788,7 +786,7 @@
         id: 31,
         word: "spirit",
         syllables: ["spir", "it"],
-        ipa: "/`sp\u026ar\u026at/",
+        ipa: "/`spɪrɪt/",
         pos: "n. sing. / n. [U]",
         meaning_en: "the unifying nature or fundamental quality of something; soul, energy, or state of mind",
         meaning_zh: "基本精神；本質；心靈；團隊精神",
@@ -814,7 +812,7 @@
         id: 32,
         word: "spiritual",
         syllables: ["spir", "it", "u", "al"],
-        ipa: "/`sp\u026ar\u026at\u0283\u028a\u0259l/",
+        ipa: "/`spɪrɪtʃʊəl/",
         pos: "adj.",
         meaning_en: "relating to or affecting the human spirit or soul as opposed to material or physical things",
         meaning_zh: "心靈的；精神上的",
@@ -1582,52 +1580,87 @@
       `;
     }
 
-    // 💡 智慧匹配分析器：完美匹配 37 個單字與片語的所有變化
+    // --- ADVANCED IDIOMS AND IRREGULAR PLURAL REGEX MAPPING ---
     function getBlankRegex(word) {
       const lower = word.toLowerCase().trim();
-      switch(lower) {
-        case "exchange": return /\bexchang\w*\b/gi;
-        case "expect": return /\bexpect(s|ed|ing)?\b/gi;
-        case "expectation": return /\bexpectat\w*\b/gi;
-        case "shelter": return /\bshelter\w*\b/gi;
-        case "fierce": return /\bfierce\w*\b/gi;
-        case "occupy": return /\boccup(y|ie\w*)\b/gi;
-        case "occupation": return /\boccupat\w*\b/gi;
-        case "vehicle": return /\bvehicle\w*\b/gi;
-        case "temporary": return /\btemporar\w*\b/gi;
-        case "assistant": return /\bassistant\w*\b/gi;
-        case "assist": return /\bassist(s|ed|ing)?\b/gi;
-        case "assistance": return /\bassistance\b/gi;
-        case "curious": return /\bcurious\b/gi;
-        case "curiosity": return /\bcuriosity\b/gi;
-        case "originate": return /\boriginat\w*\b/gi;
-        case "origin": return /\borigin(s)?\b/gi;
-        case "original": return /\boriginal\b/gi;
-        case "event": return /\bevent(s)?\b/gi;
-        case "elder": return /\belder(s)?\b/gi;
-        case "elderly": return /\belderly\b/gi;
-        case "neighborhood": return /\bneighbo?urhood\b/gi;
-        case "cooperate": return /\bco-?operat(e|es|ed|ing)\b/gi;
-        case "cooperation": return /\bco-?operation(s)?\b/gi;
-        case "arrange": return /\barrang(e|es|ed|ing)\b/gi;
-        case "arrangement": return /\barrangement(s)?\b/gi;
-        case "relax": return /\brelax\w*\b/gi;
-        case "container": return /\bcontainer(s)?\b/gi;
-        case "contain": return /\bcontain(s|ed|ing)?\b/gi;
-        case "stroll": return /\bstroll\w*\b/gi;
-        case "aspect": return /\baspect(s)?\b/gi;
-        case "spirit": return /\bspirit(s)?\b/gi;
-        case "spiritual": return /\bspiritual\b/gi;
-        case "take part in": return /\bt(ake|ook)s?\s+part\s+in\b/gi;
-        case "take place": return /\bt(ake|ook)s?\s+place\b/gi;
-        case "come about": return /\bc(ome|ame)s?\s+about\b/gi;
-        case "help out": return /\bhelp(s|ed|ing)?\s+(\w+\s+)?out\b/gi;
-        case "hand out": return /\bhand(s|ed|ing)?\s+out\b/gi;
-        default: return new RegExp(`\\b${lower.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\w*\\b`, 'gi');
+      
+      // 💡 精確匹配 5 個常用片語的各種時態與被代名詞切分變化
+      if (lower === "take part in") {
+        return /\b(take|takes|took|taking)\s+part\s+in\b/gi;
       }
+      if (lower === "take place") {
+        return /\b(take|takes|took|taking)\s+place\b/gi;
+      }
+      if (lower === "come about") {
+        return /\b(come|comes|came|coming)\s+about\b/gi;
+      }
+      if (lower === "help out") {
+        // 匹配 help out, helps out, helped out, 還有代名詞切分的 help him out, help them out 等
+        return /\bhelp(s|ed|ing)?\s+(?:[a-zA-Z']+\s+)?out\b/gi;
+      }
+      if (lower === "hand out") {
+        return /\bhand(s|ed|ing)?\s+out\b/gi;
+      }
+
+      // 💡 精確匹配其餘 32 個單字的單複數與動詞時態變化
+      if (lower === "occupy") {
+        return /\boccup(y|ies|ied|ying)\b/gi;
+      }
+      if (lower === "cooperate") {
+        return /\bco-?operat(e|es|ed|ing)\b/gi;
+      }
+      if (lower === "cooperation") {
+        return /\bco-?operation\b/gi;
+      }
+      if (lower === "arrange") {
+        return /\barrang(e|es|ed|ing)\b/gi;
+      }
+      if (lower === "arrangement") {
+        return /\barrangement(s)?\b/gi;
+      }
+      if (lower === "expectation") {
+        return /\bexpectation(s)?\b/gi;
+      }
+      if (lower === "vehicle") {
+        return /\bvehicle(s)?\b/gi;
+      }
+      if (lower === "assistant") {
+        return /\bassistant(s)?\b/gi;
+      }
+      if (lower === "assist") {
+        return /\bassist(s|ed|ing)?\b/gi;
+      }
+      if (lower === "container") {
+        return /\bcontainer(s)?\b/gi;
+      }
+      if (lower === "contain") {
+        return /\bcontain(s|ed|ing)?\b/gi;
+      }
+      if (lower === "aspect") {
+        return /\baspect(s)?\b/gi;
+      }
+      if (lower === "spirit") {
+        return /\bspirit(s)?\b/gi;
+      }
+      if (lower === "exchange") {
+        return /\bexchang(e|es|ed|ing)\b/gi;
+      }
+      if (lower === "expect") {
+        return /\bexpect(s|ed|ing)?\b/gi;
+      }
+      if (lower === "shelter") {
+        return /\bshelter(s|ed|ing)?\b/gi;
+      }
+      if (lower === "stroll") {
+        return /\bstroll(s|ed|ing)?\b/gi;
+      }
+
+      // 預設一般單字匹配 (處理字尾變化字根)
+      const escaped = lower.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      return new RegExp(`\\b${escaped}\\w*\\b`, 'gi');
     }
 
-    // C. FILL IN VIEW (Redesigned as Text Input / Fill-in-the-blank instead of selection)
+    // C. FILL IN VIEW (Truly Redesigned as Text Input / Fill-in-the-blank)
     function getFillInHTML(q) {
       // 隨機抽選其中一個例句
       const exampleObj = q.examples[Math.floor(Math.random() * q.examples.length)];
@@ -1774,7 +1807,6 @@
       }
     }
 
-    // 💡 精確 Levenshtein 相似度判定 (拒絕 spirit 破解 spiritual)
     function evaluateSpeech() {
       const q = state.quizQuestions[state.quizCurrentIndex];
       const target = q.word.trim().toLowerCase();
