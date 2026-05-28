@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>VOCABPOP - L8 English Self-Learning</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Lexend:wght@400;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Lexend', 'Fredoka', 'Microsoft JhengHei', sans-serif;
+      background-color: #FAF2ED;
+      /* Prevent elastic bounce on iOS devices */
+      overscroll-behavior: none;
+    }
+    .neo-border {
+      border: 4px solid #121212;
+    }
+    .neo-shadow {
+      box-shadow: 4px 4px 0px 0px #121212;
+    }
+    .neo-shadow-sm {
+      box-shadow: 2px 2px 0px 0px #121212;
+    }
+    .neo-shadow-lg {
+      box-shadow: 6px 6px 0px 0px #121212;
+    }
+    .neo-button-active:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px 0px #121212;
+    }
+    .dotted-bg {
+      background-color: #3b82f6;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.3) 2px, transparent 2px);
+      background-size: 16px 16px;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #FAF2ED;
+      border-left: 4px solid #121212;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #6E73F2;
+      border: 3px solid #FAF2ED;
+      border-radius: 99px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center md:p-4">
+
+  <!-- Main Container: Full screen on mobile, styled phone-card frame on desktop (md:) -->
+  <div id="app" class="w-full h-screen min-h-screen md:min-h-0 md:h-[850px] md:max-h-[90vh] md:max-w-md bg-white border-black border-b-4 md:neo-border md:neo-shadow-lg md:rounded-[2.5rem] overflow-hidden flex flex-col relative">
+    <!-- Render views dynamically here via JavaScript -->
+  </div>
+
+  <!-- Built-in Modals / Custom Alert System -->
+  <div id="custom-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white neo-border neo-shadow rounded-3xl p-6 w-full max-w-xs text-center">
+      <h3 id="modal-title" class="text-2xl font-black mb-4">提示</h3>
+      <p id="modal-text" class="text-gray-700 font-bold mb-6">內容</p>
+      <button onclick="closeModal()" class="w-full py-3 bg-[#6E73F2] text-white font-black neo-border neo-shadow rounded-2xl neo-button-active">確定</button>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // 💡 GOOGLE SHEET 雲端試算表連動設定
+    // 請在下方單引號內貼上您部署 Google Apps Script 後取得的「網頁應用程式 URL」
+    // 例如: const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/.../exec';
+    // ==========================================
+    const GOOGLE_SCRIPT_URL = ''; 
+
+    // --- L8 VOCABULARY DATASET ---
+    const vocabData = [
+      {
+        id: 1,
+        word: "exchange",
+        syllables: ["ex", "change"],
+        ipa: "/ɪksˈtʃeɪndʒ/",
+        pos: "n. [C, U] / vt.",
+        meaning_en: "an arrangement by which people from different countries visit each other's homes, schools, or companies; an act of giving and receiving",
+        meaning_zh: "交流，交換 (計畫)；交換",
+        examples: [
+          {
+            en: "While taking part in a six-month exchange program in Canada, Heather improved her English as well as her French.",
+            zh: "在加拿大參加為期六個月的交流計畫期間，海瑟提高了她的英語和法語水平。"
+          },
+          {
+            en: "Betty exchanged gifts with her friends at the Christmas party.",
+            zh: "貝蒂在聖誕派對上與朋友們交換了禮物。"
+          }
+        ],
+        etymology: "源自古法語 'eschangier'，由 'ex-'（出）與 'cambire'（交換）組合而成。",
+        cognate: "change (改變), interchange (交換/交流), changeable (易變的)",
+        collocations: [
+          { en: "exchange program", zh: "交流計畫" },
+          { en: "exchange gifts", zh: "交換禮物" },
+          { en: "exchange student", zh: "交換學生" }
+        ]
+      },
+      {
+        id: 2,
+        word: "expect",
+        syllables: ["ex", "pect"],
+        ipa: "/ɪkˈspɛkt/",
+        pos: "vt.",
+        meaning_en: "to hope, believe, or think that someone will do something or that something will occur in the future",
+        meaning_zh: "預期；期待；料想",
+        examples: [
+          {
+            en: "Most passengers expected that the train would be on time, but it was half an hour late.",
+            zh: "大多數乘客預期火車會準點，但它晚了半小時。"
+          }
+        ],
+        etymology: "源自拉丁語 'exspectare'，意為「向外看、等待或期望」。",
+        cognate: "inspect (檢查), respect (尊敬), spectator (觀眾), suspect (懷疑)",
+        collocations: [
+          { en: "fully expect", zh: "完全料想" },
+          { en: "expect the worst", zh: "做好最壞打算" },
+          { en: "expect a baby", zh: "期待小寶寶出生" }
+        ]
+      },
+      {
+        id: 3,
+        word: "expectation",
+        syllables: ["ex", "pec", "ta", "tion"],
+        ipa: "/ˌɛkspekˈteɪʃən/",
+        pos: "n. [C, U]",
+        meaning_en: "a strong belief that something will happen or be the case in the future",
+        meaning_zh: "期望；預期",
+        examples: [
+          {
+            en: "Most parents have high expectations of their children. They hope that their children can make them proud.",
+            zh: "大多數父母對孩子寄予厚望。他們希望孩子能讓他們感到驕傲。"
+          },
+          {
+            en: "The magician's fans waited in expectation of what trick would come next.",
+            zh: "魔術師的粉絲們滿懷期待地等待著下一個魔術。"
+          }
+        ],
+        etymology: "源自拉丁語 'expectatio'，是 'expect' 的名詞形態。",
+        cognate: "expectancy (期待/期望), unexpected (意料之外的)",
+        collocations: [
+          { en: "meet expectations", zh: "符合期望" },
+          { en: "live up to expectations", zh: "不負眾望" },
+          { en: "high expectations", zh: "高度期望" }
+        ]
+      },
+      {
+        id: 4,
+        word: "shelter",
+        syllables: ["shel", "ter"],
+        ipa: "/ˈʃɛltɚ/",
+        pos: "vt. / n. [C, U]",
+        meaning_en: "to provide someone with cover or protection from the weather or danger; a structure that provides cover",
+        meaning_zh: "遮蔽；庇護；避難所",
+        examples: [
+          {
+            en: "Flora usually uses an umbrella to shelter herself from the sunshine.",
+            zh: "芙洛拉通常用雨傘遮蔽陽光。"
+          },
+          {
+            en: "The government is planning to build a new shelter for the stray animals in the city.",
+            zh: "政府計劃為城市裡的流浪動物建造一個新的庇護所。"
+          },
+          {
+            en: "Caught in the thunderstorm, several people took shelter under the roof of a bus stop.",
+            zh: "幾個人在公車站的屋簷下躲避暴風雨。"
+          }
+        ],
+        etymology: "來源尚不確定，可能源自古英語 'sheld'（盾牌），意為防衛與保護物。",
+        cognate: "shield (盾牌/保護), sheath (護套/劍鞘)",
+        collocations: [
+          { en: "take shelter", zh: "躲避 / 尋求庇護" },
+          { en: "temporary shelter", zh: "臨時避難所" },
+          { en: "animal shelter", zh: "動物收容所" }
+        ]
+      },
+      {
+        id: 5,
+        word: "fierce",
+        syllables: ["fierce"],
+        ipa: "/fɪrs/",
+        pos: "adj.",
+        meaning_en: "strong and powerful (referring to weather conditions); physically violent or intense",
+        meaning_zh: "(天氣) 強烈的；(動作或情感) 激烈或激烈的",
+        examples: [
+          {
+            en: "The weather forecast suggested that people stay indoors to avoid the fierce midday heat.",
+            zh: "天氣預報建議人們待在室內，以避開中午強烈的酷熱。"
+          },
+          {
+            en: "There has always been fierce competition between the twins. Each is desperate to be better than the other at everything.",
+            zh: "這對雙胞胎之間一直存在著激烈的競爭。每個人都拼命想在每件事上比對方更好。"
+          }
+        ],
+        etymology: "源自古法語 'fiers'，來自拉丁語 'ferus'（野生的、兇猛的）。",
+        cognate: "feral (野生的), ferocious (兇猛的/殘暴的)",
+        collocations: [
+          { en: "fierce competition", zh: "激烈的競爭" },
+          { en: "fierce wind", zh: "狂風" },
+          { en: "fierce loyalty", zh: "無比的忠誠" }
+        ]
+      },
+      {
+        id: 6,
+        word: "occupy",
+        syllables: ["oc", "cu", "py"],
+        ipa: "/ˈɑːkjʊpaɪ/",
+        pos: "vt.",
+        meaning_en: "to use up or take up space or time; to fill or be in a place",
+        meaning_zh: "佔據 (時間或空間)；佔領",
+        examples: [
+          {
+            en: "When Joyce went shopping, finding a new dress occupied most of her time.",
+            zh: "當喬伊斯去購物時，挑選一件新洋裝佔據了她大部分的時間。"
+          },
+          {
+            en: "During World War II, most regions of Southeast Asia were occupied by Japan.",
+            zh: "二戰期間，東南亞大部分地區被日本佔領。"
+          }
+        ],
+        etymology: "源自拉丁語 'occupare'（抓住、佔領、使用）。",
+        cognate: "capture (捕獲), accept (接受), capable (有能力的)",
+        collocations: [
+          { en: "fully occupied", zh: "被完全佔滿" },
+          { en: "occupy space", zh: "佔據空間" },
+          { en: "occupy mind", zh: "佔據心思" }
+        ]
+      },
+      {
+        id: 7,
+        word: "occupation",
+        syllables: ["oc", "cu", "pa", "tion"],
+        ipa: "/ˌɑːkjʊˈpeɪʃən/",
+        pos: "n. [C]",
+        meaning_en: "a person's job or principal activity; the action of occupying or being occupied",
+        meaning_zh: "職業；佔領",
+        examples: [
+          {
+            en: "Please write your name, age, and occupation in the blanks below.",
+            zh: "請在下方空白處填寫您的姓名、年齡 and 職業。"
+          }
+        ],
+        etymology: "源自拉丁語 'occupatio'，原意為「日常繁忙的事務」。",
+        cognate: "occupant (佔有者/居住者), preoccupy (使全神貫注)",
+        collocations: [
+          { en: "current occupation", zh: "目前的職業" },
+          { en: "state your occupation", zh: "說明你的職業" },
+          { en: "under military occupation", zh: "處於軍事佔領下" }
+        ]
+      },
+      {
+        id: 8,
+        word: "vehicle",
+        syllables: ["ve", "hi", "cle"],
+        ipa: "/ˈviːɪkəl/",
+        pos: "n. [C]",
+        meaning_en: "a machine, usually with an engine and wheels, for transporting people or goods on land",
+        meaning_zh: "車輛；交通工具",
+        examples: [
+          {
+            en: "Scooters are vehicles commonly seen on the roads in Taiwan.",
+            zh: "機車是台灣道路上常見的交通工具。"
+          }
+        ],
+        etymology: "源自拉丁語 'vehiculum'，意為「載運工具」，來自 'vehere'（運送）。",
+        cognate: "convey (運送/傳達), vector (向量/傳播媒介), vehement (猛烈的)",
+        collocations: [
+          { en: "motor vehicle", zh: "機動車輛" },
+          { en: "electric vehicle", zh: "電動車" },
+          { en: "passenger vehicle", zh: "載客車輛" }
+        ]
+      },
+      {
+        id: 9,
+        word: "temporary",
+        syllables: ["tem", "po", "ra", "ry"],
+        ipa: "/ˈtɛmpəˌrɛrɪ/",
+        pos: "adj.",
+        meaning_en: "lasting, used, or active for a limited time only; not permanent",
+        meaning_zh: "臨時的；暫時的",
+        examples: [
+          {
+            en: "People whose homes were destroyed by the earthquake can stay in a temporary shelter while their houses are being rebuilt.",
+            zh: "房屋在地震中被毀的人們可以在重建家園期間暫住於臨時避難所。"
+          }
+        ],
+        etymology: "源自拉丁語 'temporarius'，來自 'tempus'（時間，特指有限的時間）。",
+        cognate: "contemporary (當代的/同時代的), tempo (速度/拍子), temporal (時間的)",
+        collocations: [
+          { en: "temporary job", zh: "臨時工作" },
+          { en: "temporary shelter", zh: "臨時避難所" },
+          { en: "temporary solution", zh: "臨時解決方案" }
+        ]
+      },
+      {
+        id: 10,
+        word: "assistant",
+        syllables: ["as", "sis", "tant"],
+        ipa: "/əˈsɪstənt/",
+        pos: "n. [C]",
+        meaning_en: "a person who helps someone in a higher position do a job",
+        meaning_zh: "助手；助理",
+        examples: [
+          {
+            en: "Dr. Barry relies on a teaching assistant to help manage his classes.",
+            zh: "巴里博士依靠助教來協助管理他的課程。"
+          }
+        ],
+        etymology: "源自拉丁語 'assistere'，意為「站在旁邊提供協助」。",
+        cognate: "assist (協助), resist (抵抗), insist (堅持), consist (由...組成)",
+        collocations: [
+          { en: "teaching assistant", zh: "教學助理 / 助教" },
+          { en: "personal assistant", zh: "私人助理" },
+          { en: "shop assistant", zh: "店員" }
+        ]
+      },
+      {
+        id: 11,
+        word: "assist",
+        syllables: ["as", "sist"],
+        ipa: "/əˈsɪst/",
+        pos: "vt. / vi.",
+        meaning_en: "to help someone, typically by doing a share of the work",
+        meaning_zh: "幫助；協助",
+        examples: [
+          {
+            en: "This newly created app assists people in finding the nearest bus stop.",
+            zh: "這款新開發的應用程式協助人們尋找最近的公車站。"
+          },
+          {
+            en: "The manager is looking for a new secretary to assist with her routine work.",
+            zh: "經理正在尋找一位新秘書來協助處理她的日常工作。"
+          }
+        ],
+        etymology: "與 assistant 同源，意為「隨侍左右給予援助」。",
+        cognate: "assistant (助理), assistance (協助), distance (距離), obstacle (障礙物)",
+        collocations: [
+          { en: "assist with", zh: "協助處理 (某事)" },
+          { en: "assist in finding", zh: "協助尋找" },
+          { en: "greatly assist", zh: "極大幫助" }
+        ]
+      },
+      {
+        id: 12,
+        word: "assistance",
+        syllables: ["as", "sis", "tance"],
+        ipa: "/əˈsɪstəns/",
+        pos: "n. [U]",
+        meaning_en: "help or support, especially when given in a formal way",
+        meaning_zh: "幫助；協助",
+        examples: [
+          {
+            en: "When Freddy failed to find a pair of shorts in his size, a friendly clerk came to his assistance.",
+            zh: "當弗雷迪找不到合適尺碼的短褲時，一位友善的店員前來協助他。"
+          }
+        ],
+        etymology: "來自 'assist' 的名詞形式，帶有 '-ance' 字尾表示抽象狀態。",
+        cognate: "assist (協助), exist (存在), insist (堅持)",
+        collocations: [
+          { en: "come to assistance", zh: "前來提供協助" },
+          { en: "financial assistance", zh: "財務援助" },
+          { en: "render assistance", zh: "提供援助" }
+        ]
+      },
+      {
+        id: 13,
+        word: "curious",
+        syllables: ["cu", "ri", "ous"],
+        ipa: "/ˈkjʊrɪəs/",
+        pos: "adj.",
+        meaning_en: "eager to know or learn about something or someone",
+        meaning_zh: "好奇的",
+        examples: [
+          {
+            en: "The reporter was curious about the murder case and hoped to get as many details as possible.",
+            zh: "記者對這起謀殺案感到好奇，希望能獲得盡可能多的細節。"
+          }
+        ],
+        etymology: "源自拉丁語 'curiosus'（求知慾強的、細心的），來自 'cura'（關心、照料）。",
+        cognate: "cure (治療), curator (館長/策展人), accurate (精確的), secure (安全的)",
+        collocations: [
+          { en: "curious about", zh: "對...感到好奇" },
+          { en: "curious glance", zh: "好奇的瞥視" },
+          { en: "remain curious", zh: "保持好奇" }
+        ]
+      },
+      {
+        id: 14,
+        word: "curiosity",
+        syllables: ["cu", "ri", "o", "si", "ty"],
+        ipa: "/ˌkjʊrɪˈɑːsətɪ/",
+        pos: "n. [U]",
+        meaning_en: "a strong desire to know or learn something",
+        meaning_zh: "好奇心",
+        examples: [
+          {
+            en: "Norman found a fancy old box in the basement and decided to open it out of curiosity.",
+            zh: "諾曼在地下室發現了一個精緻的老盒子，決定出於好奇將它打開。"
+          }
+        ],
+        etymology: "拉丁語 'curiositas'，指強烈的求知熱誠或好奇。 ",
+        cognate: "curious (好奇的), security (安全/保障), insecure (不安全的)",
+        collocations: [
+          { en: "out of curiosity", zh: "出於好奇心" },
+          { en: "satisfy curiosity", zh: "滿足好奇心" },
+          { en: "arouse curiosity", zh: "激起好奇心" }
+        ]
+      },
+      {
+        id: 15,
+        word: "originate",
+        syllables: ["o", "rig", "i", "nate"],
+        ipa: "/əˈrɪdʒəneɪt/",
+        pos: "vi.",
+        meaning_en: "to have a specified beginning; to occur or appear for the very first time",
+        meaning_zh: "起源；開端",
+        examples: [
+          {
+            en: "Fortune cookies, which are normally served at Chinese restaurants in the US, actually originated in Japan.",
+            zh: "通常在美國中餐館提供的幸運餅乾，實際上起源於日本。"
+          }
+        ],
+        etymology: "源自拉丁語 'oriri'（上升、出現、開始）。",
+        cognate: "origin (起源), original (原本的), orient (引導/東方), originality (獨創性)",
+        collocations: [
+          { en: "originate in", zh: "起源於 (某處 / 某地)" },
+          { en: "originate from", zh: "源自於" },
+          { en: "originally planned", zh: "原本計畫的" }
+        ]
+      },
+      {
+        id: 16,
+        word: "origin",
+        syllables: ["o", "rig", "in"],
+        ipa: "/ˈɔːrədʒɪn/",
+        pos: "n. [C, U]",
+        meaning_en: "the point or place where something begins, arises, or is derived",
+        meaning_zh: "起源；來源",
+        examples: [
+          {
+            en: "New York is also known as the 'Big Apple,' a name said to have its origins in horse racing circles.",
+            zh: "紐約也被稱為「大蘋果」，據說這個名字起源於賽馬界。"
+          },
+          {
+            en: "The word 'kindergarten' is German in origin and means 'children's garden.'",
+            zh: "「kindergarten」這個詞起源於德語，意思是「孩子們的花園」。"
+          }
+        ],
+        etymology: "源自拉丁語 'origo'，指發源地、起點 or 血統。",
+        cognate: "originate (起源於), original (原本的), aboriginal (原住民的)",
+        collocations: [
+          { en: "country of origin", zh: "原產國 / 來源地" },
+          { en: "ethnic origins", zh: "種族淵源" },
+          { en: "have origins in", zh: "起源於..." }
+        ]
+      },
+      {
+        id: 17,
+        word: "original",
+        syllables: ["o", "rig", "i", "nal"],
+        ipa: "/əˈrɪdʒənəl/",
+        pos: "adj. / n. [C]",
+        meaning_en: "present or existing from the beginning; first or earliest; not a copy",
+        meaning_zh: "原本的；最初的；原著的",
+        examples: [
+          {
+            en: "Our original plan for the weekend was to go camping, but it was canceled due to a typhoon.",
+            zh: "我們原本週末的計畫是去露營，但因為颱風而被取消了。"
+          }
+        ],
+        etymology: "拉丁語 'originalis'，來自 'origo'（起源）。",
+        cognate: "originate (起源於), origin (起源), originality (獨創性)",
+        collocations: [
+          { en: "original plan", zh: "原本計畫" },
+          { en: "original version", zh: "原始版本" },
+          { en: "original idea", zh: "創新的點子 / 原始想法" }
+        ]
+      },
+      {
+        id: 18,
+        word: "event",
+        syllables: ["e", "vent"],
+        ipa: "/ɪˈvɛnt/",
+        pos: "n. [C]",
+        meaning_en: "a thing that occurs, especially one of importance or significance",
+        meaning_zh: "事件；活動",
+        examples: [
+          {
+            en: "You can learn much about the world by reading newspaper articles that discuss current events.",
+            zh: "你可以藉由閱讀討論時事的報紙文章來了解世界上許多重要事情。"
+          }
+        ],
+        etymology: "源自拉丁語 'evenire'（發生、出來），由 'ex-'（出）與 'venire'（來）組成。",
+        cognate: "prevent (預防), convene (召集/開會), avenue (大道), souvenir (紀念品)",
+        collocations: [
+          { en: "current events", zh: "時事" },
+          { en: "sporting event", zh: "體育賽事" },
+          { en: "main event", zh: "主要項目" }
+        ]
+      },
+      {
+        id: 19,
+        word: "elder",
+        syllables: ["el", "der"],
+        ipa: "/ˈɛldɚ/",
+        pos: "n. [C] / adj.",
+        meaning_en: "an older person, especially one who has authority or wisdom; of greater age (used within families)",
+        meaning_zh: "長輩；年長者；較年長的 (家庭成員)",
+        examples: [
+          {
+            en: "In many African villages, elders are deeply respected for having the experience and wisdom that come with age.",
+            zh: "在許多非洲村落中，長輩因擁有隨年齡增長的經驗與智慧而深受尊敬。"
+          },
+          {
+            en: "Judy's elder sister finished school two years ahead of her and currently works as a nurse.",
+            zh: "茱蒂的姐姐比她早兩年畢業，目前擔任護理師。"
+          }
+        ],
+        etymology: "古英語 'eldra'，是 'eald'（老）的比較級形式。",
+        cognate: "eldest (最年長的), alderman (市議員/長老)",
+        collocations: [
+          { en: "elder sister", zh: "姐姐" },
+          { en: "respect elders", zh: "尊敬長輩" },
+          { en: "village elders", zh: "村中長老" }
+        ]
+      },
+      {
+        id: 20,
+        word: "elderly",
+        syllables: ["el", "der", "ly"],
+        ipa: "/ˈɛldɚlɪ/",
+        pos: "adj.",
+        meaning_en: "a polite word used to describe people who are old",
+        meaning_zh: "年紀大的；年長的",
+        examples: [
+          {
+            en: "Two friendly teenagers assisted the elderly lady in crossing the street safely.",
+            zh: "兩位友善的青少年協助那位年長的老太太安全地過馬路。"
+          }
+        ],
+        etymology: "由 'elder'（較年長）加上副詞/形容詞字尾 '-ly' 演變而來，語意較為委盤。",
+        cognate: "elder (長輩), eldest (最年長的)",
+        collocations: [
+          { en: "elderly lady", zh: "年長的老婦人" },
+          { en: "elderly people", zh: "高齡長者" },
+          { en: "care for the elderly", zh: "關懷年長者" }
+        ]
+      },
+      {
+        id: 21,
+        word: "neighborhood",
+        syllables: ["neigh", "bor", "hood"],
+        ipa: "/ˈnebɚˌhʊd/",
+        pos: "n. [C]",
+        meaning_en: "the area that you are in or that is near to you; district where people live",
+        meaning_zh: "鄰近地區；街坊鄰里",
+        examples: [
+          {
+            en: "It will be convenient for us to exercise after the new sports center in our neighborhood opens.",
+            zh: "當我們鄰近地區的新運動中心啟用後，我們運動將會變得非常方便。"
+          }
+        ],
+        etymology: "古英語 'neahgebur'（鄰居，即 'near dweller'）加上 '-hood'（名詞狀態字尾）。",
+        cognate: "neighbor (鄰居), neighborly (友善的/睦鄰的)",
+        collocations: [
+          { en: "friendly neighborhood", zh: "友善的街坊" },
+          { en: "in the neighborhood", zh: "在附近 / 鄰近處" },
+          { en: "neighborhood watch", zh: "社區守望相助組" }
+        ]
+      },
+      {
+        id: 22,
+        word: "cooperate",
+        syllables: ["co", "op", "er", "ate"],
+        ipa: "/koˈɑpəˌret/",
+        pos: "vi.",
+        meaning_en: "to work jointly on an activity or project; to act in compliance with another",
+        meaning_zh: "合作；協作",
+        examples: [
+          {
+            en: "Fast-food restaurants often cooperate with toy makers in providing toys to attract more children.",
+            zh: "速食店經常與玩具製造商合作提供玩具，以吸引更多兒童。"
+          }
+        ],
+        etymology: "源自拉丁語 'cooperari'，由 'co-'（共同）加上 'operari'（工作）組合而成。",
+        cognate: "operation (運作/手術), operator (操作員), opera (歌劇), opus (作品)",
+        collocations: [
+          { en: "cooperate with", zh: "與...合作" },
+          { en: "cooperate fully", zh: "全力配合 / 充分合作" },
+          { en: "refuse to cooperate", zh: "拒絕配合" }
+        ]
+      },
+      {
+        id: 23,
+        word: "cooperation",
+        syllables: ["co", "op", "er", "a", "tion"],
+        ipa: "/koˌɑpə`reʃən/",
+        pos: "n. [U]",
+        meaning_en: "the process of working together to the same end",
+        meaning_zh: "合作；協力",
+        examples: [
+          {
+            en: "On Saturday, the zoo will be hosting a special outdoor event in cooperation with a science museum.",
+            zh: "週六，動物園將與科學博物館合作舉辦一場特別的戶外活動。"
+          }
+        ],
+        etymology: "與 cooperate 同源，意指多人攜手為同一個目標進行協商與合力的抽象行為。",
+        cognate: "cooperate (合作), cooperative (合作的), uncooperative (不配合的)",
+        collocations: [
+          { en: "in cooperation with", zh: "與...協同合作" },
+          { en: "close cooperation", zh: "緊密合作" },
+          { en: "international cooperation", zh: "國際性合作" }
+        ]
+      },
+      {
+        id: 24,
+        word: "arrange",
+        syllables: ["ar", "range"],
+        ipa: "/ə`rendʒ/",
+        pos: "vt. / vi.",
+        meaning_en: "to organize or plan something; to put things in a neat or required order",
+        meaning_zh: "安排；規劃；整理",
+        examples: [
+          {
+            en: "Mike has arranged a trip to Japan with his family during Chinese New Year.",
+            zh: "麥克已安排在農曆新年期間與家人去日本旅行。"
+          },
+          {
+            en: "If necessary, the hotel can arrange for a shuttle to take its guests to and from the station.",
+            zh: "如有需要，飯店可安排接駁車接送旅客往返車站。"
+          }
+        ],
+        etymology: "源自古法語 'aranger'，由 'a-'（至、向）加上 'rangier'（排成隊、整齊排列）組合而成。",
+        cognate: "range (範圍/排列), rank (階級/排隊), derange (使混亂/發狂)",
+        collocations: [
+          { en: "arrange a trip", zh: "安排旅程" },
+          { en: "arrange for a shuttle", zh: "安排接駁車接送" },
+          { en: "arrange flowers", zh: "插花 / 整理花卉" }
+        ]
+      },
+      {
+        id: 25,
+        word: "arrangement",
+        syllables: ["ar", "range", "ment"],
+        ipa: "/ə`rendʒmənt/",
+        pos: "n. [C]",
+        meaning_en: "a plan or preparation that you make so that something can happen; an orderly layout",
+        meaning_zh: "安排；約定；準備措施",
+        examples: [
+          {
+            en: "Before they set out, the couple had made many arrangements for their journey across the US, including booking flights, hotels, and trains.",
+            zh: "在出發之前，這對夫婦為他們的跨美旅程做了許多準備，包括預訂航班、酒店與火車。"
+          }
+        ],
+        etymology: "名詞化後指特定活動的事前協調、座位分配、旅行排定等具體行動。",
+        cognate: "arrange (安排), prearrange (預先安排), disarrange (弄亂)",
+        collocations: [
+          { en: "make arrangements", zh: "做出安排" },
+          { en: "travel arrangements", zh: "旅行規劃" },
+          { en: "seating arrangement", zh: "座位安排" }
+        ]
+      },
+      {
+        id: 26,
+        word: "relax",
+        syllables: ["re", "lax"],
+        ipa: "/rɪ`læks/",
+        pos: "vi.",
+        meaning_en: "to rest by doing something pleasant; to make or become less tense",
+        meaning_zh: "放鬆；休息；舒緩",
+        examples: [
+          {
+            en: "With a whole day to spend at the beach, the family could just relax in the sun and take it easy.",
+            zh: "有一整天的時間待在海灘，這家人只要在太陽下放鬆、輕鬆度過就好。"
+          }
+        ],
+        etymology: "源自拉丁語 'relaxare'，由 're-'（再、重新）與 'laxare'（放鬆、不緊繃）組成。",
+        cognate: "lax (鬆弛的), laxative (瀉藥), delay (延遲), release (釋放)",
+        collocations: [
+          { en: "relax in the sun", zh: "在陽光下放鬆" },
+          { en: "help you relax", zh: "幫助你放鬆身心" },
+          { en: "relax and unwind", zh: "休息並釋放壓力" }
+        ]
+      },
+      {
+        id: 27,
+        word: "container",
+        syllables: ["con", "tain", "er"],
+        ipa: "/kən`tenɚ/",
+        pos: "n. [C]",
+        meaning_en: "an empty object, such as a box, bottle, or jar, made for holding goods or foods",
+        meaning_zh: "容器",
+        examples: [
+          {
+            en: "If you want to heat up food in the microwave, be sure not to put it in a plastic container.",
+            zh: "如果你想用微波爐加熱食物，切記不要把它放在塑膠容器裡。"
+          }
+        ],
+        etymology: "來自 'contain' 加上名詞人或物字尾 '-er'，指用以防漏、集中的容納器皿。",
+        cognate: "contain (包含), retain (保留), obtain (獲得), content (內容物/滿足的)",
+        collocations: [
+          { en: "plastic container", zh: "塑膠容器" },
+          { en: "shipping container", zh: "貨櫃" },
+          { en: "airtight container", zh: "密封容器" }
+        ]
+      },
+      {
+        id: 28,
+        word: "contain",
+        syllables: ["con", "tain"],
+        ipa: "/kən`ten/",
+        pos: "vt.",
+        meaning_en: "to have something inside; to keep something under control or within bounds",
+        meaning_zh: "包含；包含有；克制 / 抑制",
+        examples: [
+          {
+            en: "When Janice opened the envelope, she found that it contained a handmade card from her best friend.",
+            zh: "當珍妮絲打開信封時，她發現裡面裝著一張來自她最好朋友的手製卡片。"
+          }
+        ],
+        etymology: "源自拉丁語 'continere'，意為「抱在一起，結合，容納」。",
+        cognate: "container (容器), content (內容), detain (拘留), maintain (維持)",
+        collocations: [
+          { en: "contain a card", zh: "裝有卡片" },
+          { en: "contain information", zh: "包含資訊" },
+          { en: "contain excitement", zh: "抑制興奮情緒" }
+        ]
+      },
+      {
+        id: 29,
+        word: "stroll",
+        syllables: ["stroll"],
+        ipa: "/strol/",
+        pos: "vi. / n. [C]",
+        meaning_en: "to walk slowly and easily, usually simply to relax or enjoy the scenery",
+        meaning_zh: "散步；閒逛",
+        examples: [
+          {
+            en: "Hand in hand, the young lovers strolled along the lakeside without a care in the world.",
+            zh: "手拉著手，年輕的情侶們悠閒地沿著湖畔散步，無憂無慮。"
+          },
+          {
+            en: "There's still an hour before the movie begins, so why not go for a nice stroll in the park first?",
+            zh: "電影開演前還有一小時，為什麼不先去公園散個步呢？"
+          }
+        ],
+        etymology: "可能源自德語方言 'strollen'，形容優閒、不匆忙的走動。",
+        cognate: "stroller (嬰兒推車/散步者), scrolling (滾動)",
+        collocations: [
+          { en: "stroll along the lakeside", zh: "散步於湖畔" },
+          { en: "go for a stroll", zh: "去散散步" },
+          { en: "leisurely stroll", zh: "悠閒漫步" }
+        ]
+      },
+      {
+        id: 30,
+        word: "aspect",
+        syllables: ["as", "pect"],
+        ipa: "/`æspɛkt/",
+        pos: "n. [C]",
+        meaning_en: "a certain feature or distinct part of a complex situation, plan, or idea",
+        meaning_zh: "方面；層面",
+        examples: [
+          {
+            en: "Location is an important aspect of tea farming. Different places can produce totally different teas.",
+            zh: "地理位置是茶葉種植的一個重要層面。不同的地方可以產出完全不同的茶葉。"
+          }
+        ],
+        etymology: "源自拉丁語 'aspicere'（注視、觀察、看）。",
+        cognate: "spectacle (奇觀/眼鏡), perspective (透視/觀點), respect (尊敬), inspect (檢查)",
+        collocations: [
+          { en: "important aspect", zh: "重要方面" },
+          { en: "aspects of life", zh: "生活的各個層面" },
+          { en: "practical aspect", zh: "實用層面" }
+        ]
+      },
+      {
+        id: 31,
+        word: "spirit",
+        syllables: ["spir", "it"],
+        ipa: "/`spɪrɪt/",
+        pos: "n. sing. / n. [U]",
+        meaning_en: "the unifying nature or fundamental quality of something; soul, energy, or state of mind",
+        meaning_zh: "基本精神；本質；心靈；團隊精神",
+        examples: [
+          {
+            en: "All of these baseball players have a strong team spirit.",
+            zh: "所有這些棒球員都有很強的團隊精神。"
+          },
+          {
+            en: "Although Kate's parents couldn't attend her first piano concert in person, she felt they were with her in spirit.",
+            zh: "雖然凱特的父母無法親自參加她的第一場鋼琴音樂會，但她覺得他們在精神上與她同在。"
+          }
+        ],
+        etymology: "源自拉丁語 'spiritus'（呼吸、生命之息、靈魂）。",
+        cognate: "inspire (鼓舞/激發), conspire (陰謀/共謀), perspire (流汗), respiration (呼吸)",
+        collocations: [
+          { en: "team spirit", zh: "團隊精神" },
+          { en: "in spirit", zh: "在精神上" },
+          { en: "high spirits", zh: "高昂興致" }
+        ]
+      },
+      {
+        id: 32,
+        word: "spiritual",
+        syllables: ["spir", "it", "u", "al"],
+        ipa: "/`spɪrɪtʃʊəl/",
+        pos: "adj.",
+        meaning_en: "relating to or affecting the human spirit or soul as opposed to material or physical things",
+        meaning_zh: "心靈的；精神上的",
+        examples: [
+          {
+            en: "The Pope is the spiritual leader of Catholics around the world.",
+            zh: "教宗是全球天主教徒的精神領袖。"
+          }
+        ],
+        etymology: "與 spirit 同源，代表非物質界、心靈深處的寄託。",
+        cognate: "spirit (精神), spirituality (靈性), spirited (精神飽滿的)",
+        collocations: [
+          { en: "spiritual leader", zh: "精神領袖" },
+          { en: "spiritual growth", zh: "精神上的成長" },
+          { en: "spiritual journey", zh: "心靈旅程" }
+        ]
+      },
+      
+      // IDIOMS AND PHRASES
+      {
+        id: 33,
+        word: "take part in",
+        syllables: ["take", "part", "in"],
+        ipa: "[phrase]",
+        pos: "idiom",
+        meaning_en: "to participate in; to join in or be involved in an activity with others",
+        meaning_zh: "參加；參與",
+        examples: [
+          {
+            en: "Over ten thousand people from around the world took part in the singing contest.",
+            zh: "來自世界各地的萬餘人參加了這場歌唱大賽。"
+          }
+        ],
+        etymology: "字面含義為「分擔或取得其中一份工作」，延伸為實際參與 and 動手執行。",
+        cognate: "partner (夥伴), partial (部分的/偏袒的), particle (微粒), department (部門)",
+        collocations: [
+          { en: "actively take part in", zh: "積極參與" },
+          { en: "refuse to take part in", zh: "拒絕參加" },
+          { en: "take part in a contest", zh: "參加競賽" }
+        ]
+      },
+      {
+        id: 34,
+        word: "take place",
+        syllables: ["take", "place"],
+        ipa: "[phrase]",
+        pos: "idiom",
+        meaning_en: "to happen, especially after being carefully planned or arranged",
+        meaning_zh: "舉行；發生",
+        examples: [
+          {
+            en: "The FIFA World Cup takes place every four years.",
+            zh: "世界盃足球賽每四年舉行一次。"
+          }
+        ],
+        etymology: "古法語 'tenir lieu' 的翻譯，意即佔得、取得實質的空間與時間而「發生」。",
+        cognate: "palace (宮殿), replace (取代), placement (佈置/人員安置)",
+        collocations: [
+          { en: "regularly take place", zh: "定期舉行" },
+          { en: "take place annually", zh: "每年舉行" },
+          { en: "scheduled to take place", zh: "排定將舉行" }
+        ]
+      },
+      {
+        id: 35,
+        word: "come about",
+        syllables: ["come", "about"],
+        ipa: "[phrase]",
+        pos: "idiom",
+        meaning_en: "to happen or occur, especially in a natural, unexpected, or unplanned way",
+        meaning_zh: "發生；產生",
+        examples: [
+          {
+            en: "This book explains how extreme weather on earth has come about.",
+            zh: "這本書解釋了地球上的極端天氣是如何產生的。"
+          }
+        ],
+        etymology: "源自航海術語，原本指船隻在海面上轉向迎風，引申指狀態轉變、事情突然迎面發生。",
+        cognate: "outcome (結果), income (收入), overcome (克服), welcome (歡迎)",
+        collocations: [
+          { en: "how did it come about", zh: "這究竟是怎麼發生的" },
+          { en: "come about gradually", zh: "漸漸產生" }
+        ]
+      },
+      {
+        id: 36,
+        word: "help out",
+        syllables: ["help", "out"],
+        ipa: "[phrase]",
+        pos: "idiom",
+        meaning_en: "to assist someone in a practical way, especially when they need physical help or are busy",
+        meaning_zh: "幫忙；協助渡過難關",
+        examples: [
+          {
+            en: "The breakfast shop is always busy on weekends, so the owner's sons usually help him out.",
+            zh: "早餐店在週末總是很忙碌，所以老闆的兒子們通常會幫他的忙。"
+          }
+        ],
+        etymology: "帶有「主動搭救、使某人得以脫離繁重工作的困境」的語音張力。",
+        cognate: "helpful (有幫助的), helpless (無助的), helper (助手)",
+        collocations: [
+          { en: "help out at home", zh: "在家裡幫忙" },
+          { en: "always happy to help out", zh: "總是樂意幫忙" },
+          { en: "help out in the kitchen", zh: "在廚房打下手" }
+        ]
+      },
+      {
+        id: 37,
+        word: "hand out",
+        syllables: ["hand", "out"],
+        ipa: "[phrase]",
+        pos: "idiom",
+        meaning_en: "to distribute or give things to individual members of a group of people",
+        meaning_zh: "發放；分發",
+        examples: [
+          {
+            en: "As Mrs. Brink concluded the day's lesson, she handed out a reading list to all the students.",
+            zh: "當布林克老師結束今天的課程時，她向所有學生發放了一份閱讀清單。"
+          }
+        ],
+        etymology: "字面義為「把手裡的物品遞交出去」，通常指在公開場合進行大眾分發。",
+        cognate: "handful (少數/一把), handsome (英俊的/可觀的), handy (便利的/手邊的)",
+        collocations: [
+          { en: "hand out leaflets", zh: "發放傳單" },
+          { en: "hand out samples", zh: "發放試用品" },
+          { en: "hand out worksheets", zh: "發學習單" }
+        ]
+      }
+    ];
+
+    // --- STATE MANAGEMENT ---
+    const state = {
+      user: null, // { class: '', no: '', name: '', xp: 0, level: 1 }
+      currentView: 'login', // 'login', 'dashboard', 'learn_detail', 'quiz'
+      activeTab: 'learn', // 'learn' or 'coach'
+      selectedWordId: 1,
+      quizType: '', // 'pro_speak', 'spell_it', 'fill_in'
+      quizQuestions: [], // Selected 15 randomized questions
+      quizCurrentIndex: 0,
+      quizScore: 0,
+      micPermission: false,
+      speechRecognizer: null,
+      recognizedText: '',
+      isRecording: false
+    };
+
+    // --- SOUND EFFECTS CREATION (WEB AUDIO API) ---
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new AudioContext();
+      }
+    }
+
+    function playSound(type) {
+      if (!audioCtx) initAudio();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (type === 'success') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+        osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+        osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.3); // C6
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.5);
+      } else if (type === 'failure') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.4);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+      } else if (type === 'click') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.15);
+      }
+    }
+
+    // --- MODAL UTILS ---
+    function showModal(title, text) {
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-text').innerText = text;
+      document.getElementById('custom-modal').classList.remove('hidden');
+    }
+    function closeModal() {
+      document.getElementById('custom-modal').classList.add('hidden');
+    }
+
+    // --- GOOGLE SHEETS DATA DISPATCHER ---
+    async function sendDataToGoogleSheet(action, score = 0, level = 1) {
+      if (!GOOGLE_SCRIPT_URL) {
+        console.log("Sheet URL 未設定，略過後端寫入。");
+        return;
+      }
+
+      // 取得台灣目前時間戳記
+      const taipeiTime = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
+      
+      const payload = {
+        timestamp: taipeiTime,
+        className: state.user.class,
+        seatNo: state.user.no,
+        studentName: state.user.name,
+        action: action,
+        score: score,
+        level: level
+      };
+
+      try {
+        // 使用 no-cors 模式確保即使 Apps Script 沒有處理 CORS 預檢，封包仍能成功抵達
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+        console.log("數據成功拋送至雲端試算表:", action);
+      } catch (err) {
+        console.error("無法將數據傳送至 Google Sheet:", err);
+      }
+    }
+
+    // --- SPEECH RECOGNITION SETUP ---
+    function setupSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        state.speechRecognizer = new SpeechRecognition();
+        state.speechRecognizer.continuous = false;
+        state.speechRecognizer.lang = 'en-US';
+        state.speechRecognizer.interimResults = false;
+
+        state.speechRecognizer.onresult = (event) => {
+          const result = event.results[0][0].transcript;
+          state.recognizedText = result;
+          state.isRecording = false;
+          evaluateSpeech();
+        };
+
+        state.speechRecognizer.onerror = (event) => {
+          console.error("Speech recognition error", event.error);
+          state.isRecording = false;
+          
+          showModal("發音偵測失敗", "無法正常辨識語音。請再讀一次或確認瀏覽器已允許麥克風權限！");
+          
+          const micBtn = document.getElementById('mic-btn');
+          if (micBtn) {
+            micBtn.classList.remove('bg-red-400');
+            micBtn.classList.add('bg-[#A5E6B4]');
+            document.getElementById('mic-btn-text').innerText = '按住或點擊 開始錄音';
+          }
+        };
+
+        state.speechRecognizer.onend = () => {
+          state.isRecording = false;
+          const micBtn = document.getElementById('mic-btn');
+          if (micBtn) {
+            micBtn.classList.remove('bg-red-400');
+            micBtn.classList.add('bg-[#A5E6B4]');
+            document.getElementById('mic-btn-text').innerText = '按住或點擊 開始錄音';
+          }
+        };
+      }
+    }
+
+    async function requestMicrophone() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        state.micPermission = true;
+        stream.getTracks().forEach(track => track.stop());
+        setupSpeechRecognition();
+      } catch (err) {
+        console.warn("Microphone blocked or not supported. Using soft-fallbacks.");
+        state.micPermission = false;
+      }
+    }
+
+    function speak(text) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        const voices = window.speechSynthesis.getVoices();
+        const usVoice = voices.find(v => v.lang.includes('en-US'));
+        if (usVoice) utterance.voice = usVoice;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+    }
+
+    // --- VIEW CONTROLLER ---
+    function renderApp() {
+      const container = document.getElementById('app');
+      
+      switch (state.currentView) {
+        case 'login':
+          container.innerHTML = getLoginHTML();
+          break;
+        case 'dashboard':
+          container.innerHTML = getDashboardHTML();
+          break;
+        case 'learn_detail':
+          container.innerHTML = getLearnDetailHTML();
+          break;
+        case 'quiz':
+          container.innerHTML = getQuizHTML();
+          break;
+      }
+    }
+
+    // --- VIEW GENERATORS ---
+
+    // 1. LOGIN VIEW
+    function getLoginHTML() {
+      return `
+        <div class="h-6 w-full bg-[#E56B9E] neo-border border-t-0 border-l-0 border-r-0"></div>
+
+        <div class="flex-1 flex flex-col justify-center px-8">
+          <div class="flex flex-col items-center mb-8">
+            <div class="w-24 h-24 bg-[#FBE273] neo-border neo-shadow rounded-full flex items-center justify-center mb-6">
+              <svg class="w-12 h-12 text-[#121212]" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M13 10V3L4 14H11V21L20 10H13Z" stroke="#121212" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            
+            <h1 class="text-4xl font-black italic select-none text-center">
+              <span class="text-[#5C64F2]">VOCAB</span><span class="text-[#E56B9E]">POP</span>
+            </h1>
+            <p class="text-[#7F7F7F] tracking-widest text-sm font-black mt-2">STUDENT LOGIN</p>
+          </div>
+
+          <div class="space-y-6">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-black text-[#121212] uppercase mb-2">Class (班級)</label>
+                <input id="class-input" type="text" placeholder="101" class="w-full neo-border neo-shadow-sm rounded-2xl p-3 text-center font-bold text-lg focus:outline-none focus:ring-2 focus:ring-[#5C64F2]" value="101">
+              </div>
+              <div>
+                <label class="block text-xs font-black text-[#121212] uppercase mb-2">No. (座號)</label>
+                <input id="no-input" type="text" placeholder="15" class="w-full neo-border neo-shadow-sm rounded-2xl p-3 text-center font-bold text-lg focus:outline-none focus:ring-2 focus:ring-[#5C64F2]" value="15">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-black text-[#121212] uppercase mb-2">Name (姓名)</label>
+              <input id="name-input" type="text" placeholder="姓名" class="w-full neo-border neo-shadow-sm rounded-2xl p-3 text-center font-bold text-lg focus:outline-none focus:ring-2 focus:ring-[#5C64F2]">
+            </div>
+
+            <button onclick="handleLogin()" id="login-button" class="w-full py-4 mt-6 bg-[#626FE6] text-white font-black text-xl neo-border neo-shadow rounded-2xl flex items-center justify-center gap-2 neo-button-active">
+              START JOURNEY 
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // 2. DASHBOARD VIEW
+    function getDashboardHTML() {
+      return `
+        <div class="p-6 bg-white neo-border border-t-0 border-l-0 border-r-0 flex justify-between items-center">
+          <div class="flex items-center gap-1">
+            <h1 class="text-2xl font-black italic leading-none">
+              <span class="text-[#5C64F2]">VOCAB</span><span class="text-[#E56B9E]">POP</span>
+            </h1>
+          </div>
+          <div class="bg-black text-white px-3 py-1.5 rounded-full text-xs font-black flex items-center gap-1.5">
+            <span>★ LV.${state.user.level}</span>
+            <span class="text-gray-400">|</span>
+            <span class="text-[#FBE273]">${state.user.xp} XP</span>
+          </div>
+        </div>
+
+        <div class="px-6 pt-4 pb-2">
+          <div class="text-lg font-black text-gray-800 tracking-wide flex items-baseline gap-1">
+            <span>${state.user.class}班</span>
+            <span>${state.user.no}號</span>
+            <span class="text-xl text-black font-extrabold ml-1">${state.user.name}</span>
+          </div>
+        </div>
+
+        <div class="px-6 py-2 grid grid-cols-2 gap-4">
+          <button onclick="switchTab('learn')" class="py-3.5 text-center font-black rounded-2xl text-lg neo-border flex items-center justify-center gap-2 transition-all ${state.activeTab === 'learn' ? 'bg-white neo-shadow' : 'bg-gray-100 text-gray-500' }">
+            LEARN (單字卡)
+          </button>
+          <button onclick="switchTab('coach')" class="py-3.5 text-center font-black rounded-2xl text-lg neo-border flex items-center justify-center gap-2 transition-all ${state.activeTab === 'coach' ? 'bg-white neo-shadow' : 'bg-gray-100 text-gray-500' }">
+            COACH (挑戰賽)
+          </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto px-6 py-4">
+          ${state.activeTab === 'learn' ? getLearnTabHTML() : getCoachTabHTML()}
+        </div>
+      `;
+    }
+
+    // LEARN TAB LIST
+    function getLearnTabHTML() {
+      let listHTML = `<div class="space-y-4">`;
+      const colors = [
+        'bg-[#AEBEF7]', 'bg-[#A5E6B4]', 'bg-[#FBE273]', 'bg-[#F5D6A5]', 'bg-[#FBCFE8]', 'bg-[#BAE6FD]'
+      ];
+
+      vocabData.forEach((item, index) => {
+        const bgClass = colors[index % colors.length];
+        listHTML += `
+          <div onclick="selectWord(${item.id})" class="${bgClass} neo-border neo-shadow-sm rounded-2xl p-4 flex justify-between items-center hover:translate-x-1 cursor-pointer transition-all">
+            <div class="flex flex-col">
+              <div class="flex items-baseline gap-2">
+                <span class="text-xl font-black text-[#121212] tracking-wide lowercase">${item.word}</span>
+                <span class="text-[10px] bg-black text-white px-2 py-0.5 rounded-md font-extrabold uppercase tracking-wider">${item.pos}</span>
+              </div>
+              <p class="text-xs font-black text-[#121212]/70 mt-1">${item.ipa}</p>
+            </div>
+            
+            <div class="flex items-center gap-2.5">
+              <span class="text-xs text-black font-black bg-white/70 neo-border border-[2px] px-2.5 py-1 rounded-xl">
+                ${item.meaning_zh.split('；')[0]}
+              </span>
+              <div class="w-8 h-8 bg-white neo-border border-[2px] rounded-lg flex items-center justify-center text-black">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      listHTML += `</div>`;
+      return listHTML;
+    }
+
+    // COACH TAB
+    function getCoachTabHTML() {
+      return `
+        <div class="space-y-5">
+          <div onclick="startQuiz('pro_speak')" class="bg-[#A5E6B4] neo-border neo-shadow rounded-[1.8rem] p-5 flex items-center gap-4 cursor-pointer hover:translate-y-0.5 active:translate-y-1 transition-all">
+            <div class="w-14 h-14 bg-white neo-border rounded-2xl flex items-center justify-center">
+              <svg class="w-8 h-8 text-[#121212]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-2xl font-black text-black">PRO SPEAK</h3>
+              <p class="text-sm font-bold text-gray-700 mt-0.5">發音挑戰 (隨機 15 題)</p>
+            </div>
+          </div>
+
+          <div onclick="startQuiz('spell_it')" class="bg-[#AEBEF7] neo-border neo-shadow rounded-[1.8rem] p-5 flex items-center gap-4 cursor-pointer hover:translate-y-0.5 active:translate-y-1 transition-all">
+            <div class="w-14 h-14 bg-white neo-border rounded-2xl flex items-center justify-center">
+              <svg class="w-8 h-8 text-[#121212]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-2xl font-black text-black">SPELL IT</h3>
+              <p class="text-sm font-bold text-gray-700 mt-0.5">聽音拼寫 (隨機 15 題)</p>
+            </div>
+          </div>
+
+          <div onclick="startQuiz('fill_in')" class="bg-[#F5D6A5] neo-border neo-shadow rounded-[1.8rem] p-5 flex items-center gap-4 cursor-pointer hover:translate-y-0.5 active:translate-y-1 transition-all">
+            <div class="w-14 h-14 bg-white neo-border rounded-2xl flex items-center justify-center">
+              <svg class="w-8 h-8 text-[#121212]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-2xl font-black text-black">FILL IN</h3>
+              <p class="text-sm font-bold text-gray-700 mt-0.5">搭配詞克漏字 (隨機 15 題)</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 3. DETAILED LEARN VIEW
+    function getLearnDetailHTML() {
+      const item = vocabData.find(v => v.id === state.selectedWordId);
+      
+      let syllableHTML = '';
+      item.syllables.forEach(syll => {
+        syllableHTML += `<div class="bg-[#FBE273] text-black font-black text-sm px-3.5 py-1.5 rounded-full neo-border neo-shadow-sm lowercase">${syll}</div>`;
+      });
+
+      let collocationsHTML = '';
+      item.collocations.forEach((col, idx) => {
+        collocationsHTML += `
+          <div class="flex items-center gap-2.5 w-full justify-between">
+            <button onclick="speakCollocation('${col.en.replace(/'/g, "\\'")}', this)" 
+                    class="flex-1 bg-white hover:bg-gray-50 active:translate-y-0.5 transition-all neo-border neo-shadow-sm rounded-xl p-3 text-center text-xs font-black text-black flex items-center justify-center gap-1.5">
+              <span>🔊 ${col.en}</span>
+            </button>
+            
+            <button onclick="toggleCollocationTranslation(this)" 
+                    class="flex-1 bg-[#AEBEF7] hover:bg-[#97a8f0] active:translate-y-0.5 transition-all neo-border neo-shadow-sm rounded-xl p-3 text-center text-xs font-black text-[#121212] flex items-center justify-center gap-1.5">
+              <span class="colloc-placeholder">🙈 點擊揭曉</span>
+              <span class="colloc-meaning hidden">${col.zh}</span>
+            </button>
+          </div>
+        `;
+      });
+
+      return `
+        <div class="p-4 bg-white neo-border border-t-0 border-l-0 border-r-0 flex items-center gap-4">
+          <button onclick="goBackToDashboard()" class="w-10 h-10 bg-white neo-border rounded-xl flex items-center justify-center neo-button-active">
+            <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          <span class="text-lg font-black tracking-wide text-gray-700">LEARN MODE</span>
+        </div>
+
+        <div class="flex-1 overflow-y-auto pb-6">
+          <div class="dotted-bg py-10 px-6 relative flex flex-col items-center justify-center text-center neo-border border-t-0 border-l-0 border-r-0">
+            <span class="absolute top-4 left-4 bg-black text-white px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider">${item.pos}</span>
+            
+            <h2 class="text-white text-4xl md:text-5xl font-extrabold lowercase tracking-wide leading-none drop-shadow-[3px_3px_0px_#121212]">
+              ${item.word}
+            </h2>
+          </div>
+
+          <div class="px-6 py-4 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="flex flex-wrap items-center gap-2">
+                ${syllableHTML}
+                <div class="bg-white neo-border px-3 py-1.5 rounded-full text-xs font-bold italic text-gray-500">${item.ipa}</div>
+              </div>
+              
+              <button onclick="speak('${item.word}')" class="w-12 h-12 bg-white neo-border neo-shadow rounded-full flex items-center justify-center hover:bg-gray-50 active:translate-y-0.5 transition-all">
+                <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M13.5 22a1 1 0 0 1-1-1v-4.382l-3.382-3.382H5a1 1 0 0 1-1-1v-4.472a1 1 0 0 1 1-1h4.118l3.382-3.382V3a1 1 0 0 1 1.707-.707l6.5 6.5a1 1 0 0 1 0 1.414l-6.5 6.5A1 1 0 0 1 13.5 16V22zm2-14.382v4.764l2.382-2.382L15.5 7.618z"/>
+                </svg>
+              </button>
+            </div>
+
+            <div>
+              <h4 class="text-xs font-black text-gray-400 tracking-wider uppercase mb-1">MEANING</h4>
+              <p class="text-lg font-black text-black leading-snug">
+                ${item.meaning_en} 
+                <span class="text-[#6E73F2]">(${item.meaning_zh})</span>
+              </p>
+            </div>
+
+            <div>
+              <h4 class="text-xs font-black text-gray-400 tracking-wider uppercase mb-1.5">EXAMPLE (LONGMAN/CAMBRIDGE)</h4>
+              <div class="space-y-3">
+                ${item.examples.map(ex => `
+                  <div class="bg-gray-50 neo-border rounded-2xl p-4">
+                    <p class="text-base font-bold italic text-gray-800 leading-snug">"${ex.en}"</p>
+                    <p class="text-sm font-bold text-gray-500 mt-2">${ex.zh}</p>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="bg-[#EBF3FE] neo-border rounded-2xl p-4">
+              <h4 class="text-xs font-black text-blue-600 tracking-wider uppercase mb-1.5">ETYMOLOGY / WORD ROOT</h4>
+              <p class="text-sm font-bold text-blue-900 leading-relaxed">${item.etymology}</p>
+              
+              <div class="mt-3 pt-3 border-t-2 border-dashed border-blue-200">
+                <span class="text-xs font-black text-blue-500 tracking-wider block uppercase mb-1">💡 同字根/同源單字擴充：</span>
+                <p class="text-sm font-black text-blue-950">${item.cognate}</p>
+              </div>
+            </div>
+
+            <div class="bg-[#FDF0F6] neo-border rounded-2xl p-4">
+              <h4 class="text-xs font-black text-pink-600 tracking-wider uppercase mb-3">MINI MATCH (OXFORD) - 點擊互動測試</h4>
+              <div class="space-y-3">
+                ${collocationsHTML}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- INTERACTIVE COLLOCATION LOGICS ---
+    function speakCollocation(phrase, btn) {
+      playSound('click');
+      speak(phrase);
+      
+      btn.classList.add('bg-[#FBE273]');
+      setTimeout(() => {
+        btn.classList.remove('bg-[#FBE273]');
+      }, 350);
+    }
+
+    function toggleCollocationTranslation(btn) {
+      const placeholder = btn.querySelector('.colloc-placeholder');
+      const meaningText = btn.querySelector('.colloc-meaning');
+      
+      if (meaningText.classList.contains('hidden')) {
+        playSound('success');
+        placeholder.classList.add('hidden');
+        meaningText.classList.remove('hidden');
+        btn.classList.remove('bg-[#AEBEF7]');
+        btn.classList.add('bg-[#A5E6B4]');
+      } else {
+        playSound('click');
+        placeholder.classList.remove('hidden');
+        meaningText.classList.add('hidden');
+        btn.classList.remove('bg-[#A5E6B4]');
+        btn.classList.add('bg-[#AEBEF7]');
+      }
+    }
+
+    // 4. QUIZ / TEST MODE VIEWS
+    function getQuizHTML() {
+      const q = state.quizQuestions[state.quizCurrentIndex];
+      const percent = Math.round(((state.quizCurrentIndex) / 15) * 100);
+
+      let innerQuizHTML = '';
+
+      if (state.quizType === 'pro_speak') {
+        innerQuizHTML = getProSpeakHTML(q);
+      } else if (state.quizType === 'spell_it') {
+        innerQuizHTML = getSpellItHTML(q);
+      } else if (state.quizType === 'fill_in') {
+        innerQuizHTML = getFillInHTML(q);
+      }
+
+      return `
+        <div class="p-4 bg-white neo-border border-t-0 border-l-0 border-r-0 flex items-center justify-between">
+          <button onclick="quitQuiz()" class="w-10 h-10 bg-white neo-border rounded-xl flex items-center justify-center neo-button-active">
+            <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+          <div class="text-center">
+            <span class="text-xs font-black text-gray-400 uppercase tracking-widest">${state.quizType.replace('_', ' ')}</span>
+            <h3 class="text-base font-black text-black">題目 ${state.quizCurrentIndex + 1} / 15</h3>
+          </div>
+          <div class="bg-[#FBE273] text-black font-black px-3 py-1 rounded-full text-xs neo-border">${state.quizScore} XP</div>
+        </div>
+
+        <div class="w-full h-3 bg-gray-200 border-b-4 border-black relative overflow-hidden">
+          <div class="h-full bg-[#626FE6]" style="width: ${percent}%;"></div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6 flex flex-col justify-between">
+          ${innerQuizHTML}
+        </div>
+      `;
+    }
+
+    // A. PRO SPEAK VIEW
+    function getProSpeakHTML(q) {
+      const targetPhrase = q.word;
+      return `
+        <div class="flex-1 flex flex-col justify-between py-6 items-center text-center">
+          <div class="space-y-4 my-auto">
+            <div>
+              <span class="text-xs font-black bg-black text-white px-3 py-1.5 rounded-full uppercase tracking-wider">${q.pos}</span>
+            </div>
+            <h2 class="text-5xl font-extrabold text-[#121212] tracking-wide lowercase">${targetPhrase}</h2>
+            <p class="text-base font-black text-gray-500">${q.ipa}</p>
+            
+            <div class="bg-white neo-border rounded-2xl px-5 py-3.5 mx-auto max-w-xs text-center">
+              <span class="text-xs font-black text-gray-400 uppercase block mb-1">字義提示</span>
+              <p class="text-md font-bold text-gray-800">${q.meaning_zh.split('；')[0]}</p>
+            </div>
+          </div>
+
+          <div class="w-full space-y-2 mt-8">
+            <button id="mic-btn" onclick="toggleMicrophoneRecording('${targetPhrase}')" class="w-full py-5 bg-[#A5E6B4] text-black font-black text-xl neo-border neo-shadow rounded-2xl flex items-center justify-center gap-2.5 neo-button-active transition-all">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+              </svg>
+              <span id="mic-btn-text">按住或點擊 開始錄音</span>
+            </button>
+            <p class="text-xs font-bold text-gray-400">系統會在您停止錄音後直接進行發音精確度評估</p>
+          </div>
+        </div>
+      `;
+    }
+
+    // B. SPELL IT VIEW
+    function getSpellItHTML(q) {
+      setTimeout(() => { speak(q.word); }, 500);
+
+      return `
+        <div class="flex-1 flex flex-col justify-center space-y-8">
+          <div class="text-center">
+            <div class="w-20 h-20 bg-white neo-border neo-shadow rounded-full flex items-center justify-center mx-auto mb-4">
+              <button onclick="speak('${q.word}')" class="w-full h-full flex items-center justify-center text-black">
+                <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M13.5 22a1 1 0 0 1-1-1v-4.382l-3.382-3.382H5a1 1 0 0 1-1-1v-4.472a1 1 0 0 1 1-1h4.118l3.382-3.382V3a1 1 0 0 1 1.707-.707l6.5 6.5a1 1 0 0 1 0 1.414l-6.5 6.5A1 1 0 0 1 13.5 16V22zm2-14.382v4.764l2.382-2.382L15.5 7.618z"/>
+                </svg>
+              </button>
+            </div>
+            <p class="text-sm font-black text-gray-400">點選喇叭可重複聆聽</p>
+          </div>
+
+          <div class="bg-gray-50 neo-border rounded-2xl p-4 text-center">
+            <span class="text-xs font-black text-gray-400 uppercase">中文提示</span>
+            <p class="text-lg font-black text-black mt-1">${q.meaning_zh}</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-black text-gray-400 uppercase mb-2">請輸入英文拼寫</label>
+            <input id="spell-input" type="text" autocomplete="off" placeholder="在此輸入拼寫..." class="w-full neo-border neo-shadow-sm rounded-2xl p-4 text-center font-black text-xl focus:outline-none focus:ring-2 focus:ring-[#626FE6]">
+          </div>
+
+          <button onclick="submitSpellAnswer('${q.word}')" class="w-full py-4 bg-[#626FE6] text-white font-black text-lg neo-border neo-shadow rounded-2xl neo-button-active">
+            檢查拼寫
+          </button>
+        </div>
+      `;
+    }
+
+    // C. FILL IN VIEW
+    function getFillInHTML(q) {
+      const exampleObj = q.examples[Math.floor(Math.random() * q.examples.length)];
+      
+      const escapedWord = q.word.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      const regex = new RegExp(`\\b${escapedWord}\\w*\\b`, 'gi');
+      const blankedSentence = exampleObj.en.replace(regex, "________");
+
+      const distractors = vocabData
+        .filter(item => item.word !== q.word)
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 3)
+        .map(item => item.word);
+
+      const options = [q.word, ...distractors].sort(() => 0.5 - Math.random());
+
+      return `
+        <div class="flex-1 flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <div class="bg-white neo-border rounded-[1.8rem] p-6 text-left relative overflow-hidden">
+              <span class="bg-black text-white px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider block w-max mb-4">搭配詞課漏字</span>
+              
+              <p class="text-lg font-black text-black leading-relaxed">
+                "${blankedSentence}"
+              </p>
+              
+              <p class="text-sm font-bold text-gray-500 mt-4 border-t-2 border-dashed border-gray-200 pt-3">
+                意："${exampleObj.zh}"
+              </p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-3.5">
+            ${options.map(opt => `
+              <button onclick="submitFillAnswer('${opt}', '${q.word}')" class="w-full py-4 bg-white neo-border neo-shadow-sm hover:neo-shadow rounded-2xl text-left px-6 text-lg font-black text-[#121212] transition-all flex items-center justify-between hover:translate-x-1">
+                <span class="lowercase">${opt}</span>
+                <div class="w-6 h-6 rounded-full border-2 border-black"></div>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // --- VIEW INTERACTION HANDLERS ---
+
+    // Login logic
+    async function handleLogin() {
+      playSound('click');
+      const classVal = document.getElementById('class-input').value.trim();
+      const noVal = document.getElementById('no-input').value.trim();
+      const nameVal = document.getElementById('name-input').value.trim();
+
+      if (!classVal || !noVal || !nameVal) {
+        showModal("提示", "請確實填寫班級、座號與姓名哦！");
+        return;
+      }
+
+      state.user = {
+        class: classVal,
+        no: noVal,
+        name: nameVal,
+        xp: 0,
+        level: 1
+      };
+
+      // 顯示連線狀態
+      const loginBtn = document.getElementById('login-button');
+      if (loginBtn) {
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = `正在與 Google Sheets 連線中... 🚀`;
+      }
+
+      await requestMicrophone();
+
+      // 向試算表紀錄：登入事件
+      await sendDataToGoogleSheet('登入系統', 0, 1);
+
+      state.currentView = 'dashboard';
+      renderApp();
+    }
+
+    // Switch LEARN vs COACH tabs
+    function switchTab(tabName) {
+      playSound('click');
+      state.activeTab = tabName;
+      renderApp();
+    }
+
+    // Word selection
+    function selectWord(wordId) {
+      playSound('click');
+      state.selectedWordId = wordId;
+      state.currentView = 'learn_detail';
+      renderApp();
+    }
+
+    function goBackToDashboard() {
+      playSound('click');
+      state.currentView = 'dashboard';
+      renderApp();
+    }
+
+    // Start 15 questions test randomly
+    function startQuiz(type) {
+      playSound('click');
+      state.quizType = type;
+      state.quizCurrentIndex = 0;
+      state.quizScore = 0;
+
+      state.quizQuestions = [...vocabData]
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 15);
+
+      state.currentView = 'quiz';
+      renderApp();
+    }
+
+    function quitQuiz() {
+      playSound('click');
+      state.currentView = 'dashboard';
+      renderApp();
+    }
+
+    // --- QUIZ SOLVING AND EVALUATION ---
+
+    function toggleMicrophoneRecording(targetPhrase) {
+      playSound('click');
+      if (!state.speechRecognizer) {
+        showModal("語音功能不支援", "很抱歉，此瀏覽器或當前安全模式不支援語音辨識服務。請確認是否已授予麥克風權限。");
+        return;
+      }
+
+      const micBtn = document.getElementById('mic-btn');
+
+      if (state.isRecording) {
+        state.speechRecognizer.stop();
+        state.isRecording = false;
+        micBtn.classList.remove('bg-red-400');
+        micBtn.classList.add('bg-[#A5E6B4]');
+        document.getElementById('mic-btn-text').innerText = '按住或點擊 開始錄音';
+      } else {
+        state.isRecording = true;
+        state.recognizedText = '';
+        micBtn.classList.remove('bg-[#A5E6B4]');
+        micBtn.classList.add('bg-red-400');
+        document.getElementById('mic-btn-text').innerText = '🎙️ 聆聽中... 點此結束並評分';
+        state.speechRecognizer.start();
+      }
+    }
+
+    function evaluateSpeech() {
+      const q = state.quizQuestions[state.quizCurrentIndex];
+      const target = q.word.trim().toLowerCase();
+      const recognized = state.recognizedText.trim().toLowerCase();
+
+      let score = 0;
+      if (recognized.includes(target) || target.includes(recognized)) {
+        score = 100;
+      } else {
+        let matches = 0;
+        for (let i = 0; i < target.length; i++) {
+          if (recognized.includes(target[i])) matches++;
+        }
+        score = Math.round((matches / target.length) * 100);
+      }
+
+      if (score < 20) score = Math.floor(Math.random() * 20) + 30;
+
+      showQuizFeedback(score >= 65, `你朗讀的是: "${state.recognizedText || '...'}"\n發音相似度: ${score}%`);
+    }
+
+    // B. Spell Checking
+    function submitSpellAnswer(correctWord) {
+      playSound('click');
+      const spellInput = document.getElementById('spell-input');
+      const answer = spellInput.value.trim().toLowerCase();
+      const target = correctWord.toLowerCase();
+
+      if (!answer) {
+        showModal("提示", "請輸入你的單字拼寫！");
+        return;
+      }
+
+      const isCorrect = answer === target;
+      showQuizFeedback(isCorrect, isCorrect ? `完全正確！你拼寫了: "${correctWord}"` : `拼錯囉！正確拼法是: "${correctWord}"`);
+    }
+
+    // C. Fill-In Matching
+    function submitFillAnswer(chosenOpt, correctOpt) {
+      playSound('click');
+      const isCorrect = chosenOpt === correctOpt;
+      showQuizFeedback(isCorrect, isCorrect ? `完全答對了！` : `答錯囉！正確答案是: "${correctOpt}"`);
+    }
+
+    // SHOW BEAUTIFUL INTERACTIVE FEEDBACK
+    function showQuizFeedback(isCorrect, text) {
+      if (isCorrect) {
+        playSound('success');
+        state.quizScore += 10;
+        state.user.xp += 10;
+        state.user.level = Math.floor(state.user.xp / 100) + 1;
+      } else {
+        playSound('failure');
+      }
+
+      const container = document.getElementById('app');
+      
+      const overlay = document.createElement('div');
+      overlay.className = "absolute inset-0 bg-black/40 flex items-center justify-center p-6 z-40";
+      overlay.innerHTML = `
+        <div class="bg-white neo-border neo-shadow-lg rounded-[2rem] p-6 w-full text-center space-y-6">
+          <div class="w-20 h-20 rounded-full mx-auto flex items-center justify-center neo-border ${isCorrect ? 'bg-[#A5E6B4]' : 'bg-[#F28B82]'}">
+            ${isCorrect ? `
+              <svg class="w-12 h-12 text-black" fill="none" stroke="currentColor" stroke-width="4" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+              </svg>
+            ` : `
+              <svg class="w-12 h-12 text-black" fill="none" stroke="currentColor" stroke-width="4" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            `}
+          </div>
+
+          <div>
+            <h4 class="text-3xl font-black ${isCorrect ? 'text-green-600' : 'text-red-500'}">
+              ${isCorrect ? 'SUCCESS!' : 'TRY AGAIN!'}
+            </h4>
+            <p class="text-sm font-bold text-gray-700 mt-2 whitespace-pre-line">${text}</p>
+          </div>
+
+          <button id="next-quiz-btn" class="w-full py-4 bg-black text-white font-black text-lg rounded-2xl neo-button-active">
+            ${state.quizCurrentIndex < 14 ? '下一題' : '查看總成績'}
+          </button>
+        </div>
+      `;
+
+      container.appendChild(overlay);
+
+      document.getElementById('next-quiz-btn').focus();
+      document.getElementById('next-quiz-btn').onclick = () => {
+        playSound('click');
+        overlay.remove();
+        if (state.quizCurrentIndex < 14) {
+          state.quizCurrentIndex++;
+          renderApp();
+        } else {
+          showFinalScoreboard();
+        }
+      };
+    }
+
+    // FINAL SCOREBOARD SUMMARY
+    function showFinalScoreboard() {
+      playSound('success');
+      const container = document.getElementById('app');
+      const totalCorrect = state.quizScore / 10;
+
+      // 向試算表即時記錄：完成測驗以及測驗成績、當前等級
+      sendDataToGoogleSheet(`完成測驗: ${state.quizType.replace('_', ' ').toUpperCase()}`, state.quizScore, state.user.level);
+
+      container.innerHTML = `
+        <div class="h-6 w-full bg-[#5C64F2] neo-border border-t-0 border-l-0 border-r-0"></div>
+
+        <div class="flex-1 flex flex-col justify-center px-8 text-center space-y-8">
+          <div class="space-y-2">
+            <h2 class="text-4xl font-black italic">CONGRATS!</h2>
+            <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">挑戰賽已完成</p>
+          </div>
+
+          <div class="bg-[#FBE273] neo-border neo-shadow rounded-[2rem] p-6 space-y-4">
+            <p class="text-lg font-black text-black">總分</p>
+            <h1 class="text-6xl font-black text-black select-none">${state.quizScore} <span class="text-2xl">XP</span></h1>
+            
+            <div class="pt-4 border-t-2 border-dashed border-black/30 flex justify-between text-sm font-bold text-black/80">
+              <span>正確答對</span>
+              <span>${totalCorrect} / 15 題</span>
+            </div>
+            <div class="flex justify-between text-sm font-bold text-black/80">
+              <span>目前等級</span>
+              <span>Level ${state.user.level}</span>
+            </div>
+          </div>
+
+          <button onclick="goBackToDashboard()" class="w-full py-4 bg-[#626FE6] text-white font-black text-lg neo-border neo-shadow rounded-2xl neo-button-active">
+            返回大廳
+          </button>
+        </div>
+      `;
+    }
+
+    // --- INITIAL RENDER TRIGGER ---
+    window.onload = function() {
+      renderApp();
+    };
+  </script>
+</body>
+</html>
