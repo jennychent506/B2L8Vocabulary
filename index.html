@@ -455,7 +455,7 @@
           }
         ],
         etymology: "源自拉丁語 'origo'，指發源地、起點 or 血統。",
-        cognate: "originate (起源於), original (原本的), aboriginal (原住民的)",
+        cognate: "originate (起源於), origin (起源), aboriginal (原住民的)",
         collocations: [
           { en: "country of origin", zh: "原產國 / 來源地" },
           { en: "ethnic origins", zh: "種族淵源" },
@@ -580,7 +580,8 @@
         id: 22,
         word: "cooperate",
         syllables: ["co", "op", "er", "ate"],
-        ipa: "/koˈɑpəˌret/",
+        ipa: "/ko\u0251p\u0259\u201cret/",
+        ipa: "/ko\u0251p\u0259\u201cret/",
         pos: "vi.",
         meaning_en: "to work jointly on an activity or project; to act in compliance with another",
         meaning_zh: "合作；協作",
@@ -602,7 +603,8 @@
         id: 23,
         word: "cooperation",
         syllables: ["co", "op", "er", "a", "tion"],
-        ipa: "/koˌɑpə`reʃən/",
+        ipa: "/ko\u201e\u0251p\u0259`re\u0283\u0259n/",
+        ipa: "/ko\u201e\u0251p\u0259`re\u0283\u0259n/",
         pos: "n. [U]",
         meaning_en: "the process of working together to the same end",
         meaning_zh: "合作；協力",
@@ -624,7 +626,7 @@
         id: 24,
         word: "arrange",
         syllables: ["ar", "range"],
-        ipa: "/ə`rendʒ/",
+        ipa: "/\u0259`rend\u0292/",
         pos: "vt. / vi.",
         meaning_en: "to organize or plan something; to put things in a neat or required order",
         meaning_zh: "安排；規劃；整理",
@@ -650,7 +652,7 @@
         id: 25,
         word: "arrangement",
         syllables: ["ar", "range", "ment"],
-        ipa: "/ə`rendʒmənt/",
+        ipa: "/\u0259`rend\u0292m\u0259nt/",
         pos: "n. [C]",
         meaning_en: "a plan or preparation that you make so that something can happen; an orderly layout",
         meaning_zh: "安排；約定；準備措施",
@@ -672,7 +674,7 @@
         id: 26,
         word: "relax",
         syllables: ["re", "lax"],
-        ipa: "/rɪ`læks/",
+        ipa: "/r\u026a`l\u00e6ks/",
         pos: "vi.",
         meaning_en: "to rest by doing something pleasant; to make or become less tense",
         meaning_zh: "放鬆；休息；舒緩",
@@ -694,7 +696,7 @@
         id: 27,
         word: "container",
         syllables: ["con", "tain", "er"],
-        ipa: "/kən`tenɚ/",
+        ipa: "/k\u0259n`ten\u025dr/",
         pos: "n. [C]",
         meaning_en: "an empty object, such as a box, bottle, or jar, made for holding goods or foods",
         meaning_zh: "容器",
@@ -716,7 +718,7 @@
         id: 28,
         word: "contain",
         syllables: ["con", "tain"],
-        ipa: "/kən`ten/",
+        ipa: "/k\u0259n`ten/",
         pos: "vt.",
         meaning_en: "to have something inside; to keep something under control or within bounds",
         meaning_zh: "包含；包含有；克制 / 抑制",
@@ -731,7 +733,7 @@
         collocations: [
           { en: "contain a card", zh: "裝有卡片" },
           { en: "contain information", zh: "包含資訊" },
-          { en: "contain excitement", zh: "抑制興奮情緒" }
+          { en: "contain excitement", zh: "抑制興興奮情緒" }
         ]
       },
       {
@@ -764,7 +766,7 @@
         id: 30,
         word: "aspect",
         syllables: ["as", "pect"],
-        ipa: "/`æspɛkt/",
+        ipa: "/`\u00e6sp\u025bkt/",
         pos: "n. [C]",
         meaning_en: "a certain feature or distinct part of a complex situation, plan, or idea",
         meaning_zh: "方面；層面",
@@ -786,7 +788,7 @@
         id: 31,
         word: "spirit",
         syllables: ["spir", "it"],
-        ipa: "/`spɪrɪt/",
+        ipa: "/`sp\u026ar\u026at/",
         pos: "n. sing. / n. [U]",
         meaning_en: "the unifying nature or fundamental quality of something; soul, energy, or state of mind",
         meaning_zh: "基本精神；本質；心靈；團隊精神",
@@ -812,7 +814,7 @@
         id: 32,
         word: "spiritual",
         syllables: ["spir", "it", "u", "al"],
-        ipa: "/`spɪrɪtʃʊəl/",
+        ipa: "/`sp\u026ar\u026at\u0283\u028a\u0259l/",
         pos: "adj.",
         meaning_en: "relating to or affecting the human spirit or soul as opposed to material or physical things",
         meaning_zh: "心靈的；精神上的",
@@ -1019,7 +1021,42 @@
       document.getElementById('custom-modal').classList.add('hidden');
     }
 
-    // --- GOOGLE SHEETS DATA DISPATCHER ---
+    // --- LEVENSHTEIN DISTANCE (SIMILARITY MATCHER) ---
+    function calculateLevenshtein(s1, s2) {
+      const costs = [];
+      for (let i = 0; i <= s1.length; i++) {
+        let lastValue = i;
+        for (let j = 0; j <= s2.length; j++) {
+          if (i === 0) {
+            costs[j] = j;
+          } else if (j > 0) {
+            let newValue = costs[j - 1];
+            if (s1.charAt(i - 1) !== s2.charAt(j - 1)) {
+              newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+            }
+            costs[j - 1] = lastValue;
+            lastValue = newValue;
+          }
+        }
+        if (i > 0) costs[s2.length] = lastValue;
+      }
+      return costs[s2.length];
+    }
+
+    function getWordSimilarity(s1, s2) {
+      const cleanS1 = s1.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").trim();
+      const cleanS2 = s2.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").trim();
+      
+      const longer = cleanS1.length > cleanS2.length ? cleanS1 : cleanS2;
+      const shorter = cleanS1.length > cleanS2.length ? cleanS2 : cleanS1;
+      
+      if (longer.length === 0) return 100;
+      
+      const distance = calculateLevenshtein(longer, shorter);
+      return Math.round((longer.length - distance) / longer.length * 100);
+    }
+
+    // --- GOOGLE SHEETS DATA DISPATCHER (CORS FLUID GET METHOD) ---
     async function sendDataToGoogleSheet(action, score = 0, level = 1) {
       if (!GOOGLE_SCRIPT_URL) {
         console.log("Sheet URL 未設定，略過後端寫入。");
@@ -1029,7 +1066,8 @@
       // 取得台灣目前時間戳記
       const taipeiTime = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
       
-      const payload = {
+      // 使用 URLSearchParams 以 GET 方式穿透所有 CORS 與 Iframe 安全封鎖
+      const params = new URLSearchParams({
         timestamp: taipeiTime,
         className: state.user.class,
         seatNo: state.user.no,
@@ -1037,19 +1075,17 @@
         action: action,
         score: score,
         level: level
-      };
+      });
+
+      const requestUrl = `${GOOGLE_SCRIPT_URL}?${params.toString()}`;
 
       try {
-        // 使用 no-cors 模式確保即使 Apps Script 沒有處理 CORS 預檢，封包仍能成功抵達
-        await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
+        // 使用 no-cors 模式確保發送行為 100% 成功，不被瀏覽器擋下
+        await fetch(requestUrl, {
+          method: 'GET',
+          mode: 'no-cors'
         });
-        console.log("數據成功拋送至雲端試算表:", action);
+        console.log("數據成功傳送至 Google Sheet (GET 穿透):", action);
       } catch (err) {
         console.error("無法將數據傳送至 Google Sheet:", err);
       }
@@ -1546,27 +1582,69 @@
       `;
     }
 
+    // 💡 智慧匹配分析器：完美匹配 37 個單字與片語的所有變化
+    function getBlankRegex(word) {
+      const lower = word.toLowerCase().trim();
+      switch(lower) {
+        case "exchange": return /\bexchang\w*\b/gi;
+        case "expect": return /\bexpect(s|ed|ing)?\b/gi;
+        case "expectation": return /\bexpectat\w*\b/gi;
+        case "shelter": return /\bshelter\w*\b/gi;
+        case "fierce": return /\bfierce\w*\b/gi;
+        case "occupy": return /\boccup(y|ie\w*)\b/gi;
+        case "occupation": return /\boccupat\w*\b/gi;
+        case "vehicle": return /\bvehicle\w*\b/gi;
+        case "temporary": return /\btemporar\w*\b/gi;
+        case "assistant": return /\bassistant\w*\b/gi;
+        case "assist": return /\bassist(s|ed|ing)?\b/gi;
+        case "assistance": return /\bassistance\b/gi;
+        case "curious": return /\bcurious\b/gi;
+        case "curiosity": return /\bcuriosity\b/gi;
+        case "originate": return /\boriginat\w*\b/gi;
+        case "origin": return /\borigin(s)?\b/gi;
+        case "original": return /\boriginal\b/gi;
+        case "event": return /\bevent(s)?\b/gi;
+        case "elder": return /\belder(s)?\b/gi;
+        case "elderly": return /\belderly\b/gi;
+        case "neighborhood": return /\bneighbo?urhood\b/gi;
+        case "cooperate": return /\bco-?operat(e|es|ed|ing)\b/gi;
+        case "cooperation": return /\bco-?operation(s)?\b/gi;
+        case "arrange": return /\barrang(e|es|ed|ing)\b/gi;
+        case "arrangement": return /\barrangement(s)?\b/gi;
+        case "relax": return /\brelax\w*\b/gi;
+        case "container": return /\bcontainer(s)?\b/gi;
+        case "contain": return /\bcontain(s|ed|ing)?\b/gi;
+        case "stroll": return /\bstroll\w*\b/gi;
+        case "aspect": return /\baspect(s)?\b/gi;
+        case "spirit": return /\bspirit(s)?\b/gi;
+        case "spiritual": return /\bspiritual\b/gi;
+        case "take part in": return /\bt(ake|ook)s?\s+part\s+in\b/gi;
+        case "take place": return /\bt(ake|ook)s?\s+place\b/gi;
+        case "come about": return /\bc(ome|ame)s?\s+about\b/gi;
+        case "help out": return /\bhelp(s|ed|ing)?\s+(\w+\s+)?out\b/gi;
+        case "hand out": return /\bhand(s|ed|ing)?\s+out\b/gi;
+        default: return new RegExp(`\\b${lower.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\w*\\b`, 'gi');
+      }
+    }
+
     // C. FILL IN VIEW (Redesigned as Text Input / Fill-in-the-blank instead of selection)
     function getFillInHTML(q) {
-      // Pick a random example from the question's example set
+      // 隨機抽選其中一個例句
       const exampleObj = q.examples[Math.floor(Math.random() * q.examples.length)];
+      const regex = getBlankRegex(q.word);
       
-      // Escape the target word to use in dynamic RegExp matching
-      const escapedWord = q.word.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-      const regex = new RegExp(`\\b${escapedWord}\\w*\\b`, 'gi');
-      
-      // Extract exact word used in sentence (past tense, plural etc.)
+      // 擷取例句中的精確變化型（複數/過去式）
       const matches = exampleObj.en.match(regex);
       state.currentFillExact = matches ? matches[0].toLowerCase() : q.word.toLowerCase();
       state.currentFillBase = q.word.toLowerCase();
 
-      // Replace target word in example with blanks
+      // 在英文例句中進行底線挖空
       const blankedSentence = exampleObj.en.replace(regex, "________");
 
       return `
         <div class="flex-1 flex flex-col justify-center space-y-6">
           <div class="bg-white neo-border rounded-[1.8rem] p-6 text-left relative overflow-hidden">
-            <span class="bg-black text-white px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider block w-max mb-4">搭配詞克漏填空</span>
+            <span class="bg-black text-white px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider block w-max mb-4">搭配詞課漏填空</span>
             
             <p class="text-lg font-black text-black leading-relaxed">
               "${blankedSentence}"
@@ -1696,25 +1774,19 @@
       }
     }
 
+    // 💡 精確 Levenshtein 相似度判定 (拒絕 spirit 破解 spiritual)
     function evaluateSpeech() {
       const q = state.quizQuestions[state.quizCurrentIndex];
       const target = q.word.trim().toLowerCase();
       const recognized = state.recognizedText.trim().toLowerCase();
 
-      let score = 0;
-      if (recognized.includes(target) || target.includes(recognized)) {
-        score = 100;
-      } else {
-        let matches = 0;
-        for (let i = 0; i < target.length; i++) {
-          if (recognized.includes(target[i])) matches++;
-        }
-        score = Math.round((matches / target.length) * 100);
-      }
+      // 計算精確的 Levenshtein 相似度比例 (0 - 100%)
+      const similarityScore = getWordSimilarity(target, recognized);
 
-      if (score < 20) score = Math.floor(Math.random() * 20) + 30;
+      // 設定過關門檻：必須達到 75% 以上的吻合度 (排除 spirit vs spiritual 的 66% 誤判)
+      const passed = similarityScore >= 75;
 
-      showQuizFeedback(score >= 65, `你朗讀的是: "${state.recognizedText || '...'}"\n發音相似度: ${score}%`);
+      showQuizFeedback(passed, `你朗讀的是: "${state.recognizedText || '...'}"\n發音相似度: ${similarityScore}%`);
     }
 
     // B. Spell Checking
@@ -1745,7 +1817,7 @@
         return;
       }
 
-      // Check answer against either inflected form OR the base word form (intelligent tolerance)
+      // 檢查是否完全匹配例句中的原詞，或者輸入了原型單字（智慧寬容）
       const isCorrect = (answer === state.currentFillExact) || (answer === state.currentFillBase);
       
       const feedbackText = isCorrect 
@@ -1769,7 +1841,7 @@
       const container = document.getElementById('app');
       
       const overlay = document.createElement('div');
-      overlay.className = "absolute inset-0 bg-black/40 flex items-center justify-center p-6 z-40";
+      overlay.className = "absolute inset-0 bg-black/40 flex items-center justify-center p-4 z-40";
       overlay.innerHTML = `
         <div class="bg-white neo-border neo-shadow-lg rounded-[2rem] p-6 w-full text-center space-y-6">
           <div class="w-20 h-20 rounded-full mx-auto flex items-center justify-center neo-border ${isCorrect ? 'bg-[#A5E6B4]' : 'bg-[#F28B82]'}">
@@ -1791,7 +1863,7 @@
             <p class="text-sm font-bold text-gray-700 mt-2 whitespace-pre-line">${text}</p>
           </div>
 
-          <button id="next-quiz-btn" class="w-full py-4 bg-black text-white font-black text-lg rounded-2xl neo-button-active">
+          <button id="next-quiz-btn" class="w-full py-3 bg-black text-white font-black text-lg rounded-2xl neo-button-active">
             ${state.quizCurrentIndex < 14 ? '下一題' : '查看總成績'}
           </button>
         </div>
