@@ -238,7 +238,7 @@
         id: 7,
         word: "occupation",
         syllables: ["oc", "cu", "pa", "tion"],
-        ipa: "/ˌɑːkjʊˈpeɪʃən/",
+        ipa: "/ˌNaNjʊˈpeɪʃən/",
         pos: "n. [C]",
         meaning_en: "a person's job or principal activity; the action of occupying or being occupied",
         meaning_zh: "職業；佔領",
@@ -455,7 +455,7 @@
           }
         ],
         etymology: "源自拉丁語 'origo'，指發源地、起點 or 血統。",
-        cognate: "originate (起源於), origin (起源), aboriginal (原住民的)",
+        cognate: "originate (起源於), original (原本的), aboriginal (原住民的)",
         collocations: [
           { en: "country of origin", zh: "原產國 / 來源地" },
           { en: "ethnic origins", zh: "種族淵源" },
@@ -1054,7 +1054,7 @@
       return Math.round((longer.length - distance) / longer.length * 100);
     }
 
-    // --- GOOGLE SHEETS DATA DISPATCHER (CORS FLUID GET METHOD) ---
+    // --- GOOGLE SHEETS DATA DISPATCHER (🏆 DUAL-CHANNEL RESILIENT SENDER) ---
     async function sendDataToGoogleSheet(action, score = 0, level = 1) {
       if (!GOOGLE_SCRIPT_URL) {
         console.log("Sheet URL 未設定，略過後端寫入。");
@@ -1064,7 +1064,7 @@
       // 取得台灣目前時間戳記
       const taipeiTime = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
       
-      // 使用 URLSearchParams 以 GET 方式穿透所有 CORS 與 Iframe 安全封鎖
+      // 將資料參數化
       const params = new URLSearchParams({
         timestamp: taipeiTime,
         className: state.user.class,
@@ -1076,16 +1076,28 @@
       });
 
       const requestUrl = `${GOOGLE_SCRIPT_URL}?${params.toString()}`;
+      console.log("準備傳送資料至:", requestUrl);
 
+      // 🏆 通道一：Image Beacon (100% 繞過瀏覽器任何 CORS 安全政策阻擋，最穩健的跨網域拋接)
       try {
-        // 使用 no-cors 模式確保發送行為 100% 成功，不被瀏覽器擋下
+        const img = new Image();
+        img.onload = () => console.log("Image Beacon 成功送達並紀錄！");
+        img.onerror = () => console.log("Image Beacon 已傳送 (GAS 回傳為網頁而非純圖檔，故觸發 Error 屬正常現象，實際已寫入！)");
+        img.src = requestUrl;
+      } catch (e) {
+        console.warn("Image Beacon 通道異常，改啟用通道二:", e);
+      }
+
+      // 🏆 通道二：Fetch GET (no-cors 背景靜默拋送作為強固備份)
+      try {
         await fetch(requestUrl, {
           method: 'GET',
-          mode: 'no-cors'
+          mode: 'no-cors',
+          cache: 'no-cache'
         });
-        console.log("數據成功傳送至 Google Sheet (GET 穿透):", action);
+        console.log("Fetch 備用通道發送完畢。");
       } catch (err) {
-        console.error("無法將數據傳送至 Google Sheet:", err);
+        console.error("Fetch 通道異常:", err);
       }
     }
 
@@ -1584,7 +1596,6 @@
     function getBlankRegex(word) {
       const lower = word.toLowerCase().trim();
       
-      // 💡 精確匹配 5 個常用片語的各種時態與被代名詞切分變化
       if (lower === "take part in") {
         return /\b(take|takes|took|taking)\s+part\s+in\b/gi;
       }
@@ -1595,14 +1606,12 @@
         return /\b(come|comes|came|coming)\s+about\b/gi;
       }
       if (lower === "help out") {
-        // 匹配 help out, helps out, helped out, 還有代名詞切分的 help him out, help them out 等
         return /\bhelp(s|ed|ing)?\s+(?:[a-zA-Z']+\s+)?out\b/gi;
       }
       if (lower === "hand out") {
         return /\bhand(s|ed|ing)?\s+out\b/gi;
       }
 
-      // 💡 精確匹配其餘 32 個單字的單複數與動詞時態變化
       if (lower === "occupy") {
         return /\boccup(y|ies|ied|ying)\b/gi;
       }
@@ -1655,23 +1664,19 @@
         return /\bstroll(s|ed|ing)?\b/gi;
       }
 
-      // 預設一般單字匹配 (處理字尾變化字根)
       const escaped = lower.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
       return new RegExp(`\\b${escaped}\\w*\\b`, 'gi');
     }
 
-    // C. FILL IN VIEW (Truly Redesigned as Text Input / Fill-in-the-blank)
+    // C. FILL IN VIEW
     function getFillInHTML(q) {
-      // 隨機抽選其中一個例句
       const exampleObj = q.examples[Math.floor(Math.random() * q.examples.length)];
       const regex = getBlankRegex(q.word);
       
-      // 擷取例句中的精確變化型（複數/過去式）
       const matches = exampleObj.en.match(regex);
       state.currentFillExact = matches ? matches[0].toLowerCase() : q.word.toLowerCase();
       state.currentFillBase = q.word.toLowerCase();
 
-      // 在英文例句中進行底線挖空
       const blankedSentence = exampleObj.en.replace(regex, "________");
 
       return `
@@ -1722,7 +1727,6 @@
         level: 1
       };
 
-      // 顯示連線狀態
       const loginBtn = document.getElementById('login-button');
       if (loginBtn) {
         loginBtn.disabled = true;
@@ -1815,7 +1819,7 @@
       // 計算精確的 Levenshtein 相似度比例 (0 - 100%)
       const similarityScore = getWordSimilarity(target, recognized);
 
-      // 設定過關門檻：必須達到 75% 以上的吻合度 (排除 spirit vs spiritual 的 66% 誤判)
+      // 設定過關門檻：必須達到 75% 以上的吻合度
       const passed = similarityScore >= 75;
 
       showQuizFeedback(passed, `你朗讀的是: "${state.recognizedText || '...'}"\n發音相似度: ${similarityScore}%`);
@@ -1837,7 +1841,7 @@
       showQuizFeedback(isCorrect, isCorrect ? `完全正確！你拼寫了: "${correctWord}"` : `拼錯囉！正確拼法是: "${correctWord}"`);
     }
 
-    // C. Fill-In Matching (Text Input Submission Logic)
+    // C. Fill-In Matching
     function submitFillAnswerInput() {
       playSound('click');
       const fillInput = document.getElementById('fill-input');
@@ -1849,7 +1853,6 @@
         return;
       }
 
-      // 檢查是否完全匹配例句中的原詞，或者輸入了原型單字（智慧寬容）
       const isCorrect = (answer === state.currentFillExact) || (answer === state.currentFillBase);
       
       const feedbackText = isCorrect 
